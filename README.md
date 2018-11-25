@@ -1,5 +1,7 @@
 # SMWC Interface
 
+![Picker](https://i.imgur.com/22R7Lmi.jpg)
+
 A python script that will read all the entries from Super Mario World Central (it caches all the available entries on first run), let you pick any hack to apply to your rom, and automatically apply the bps file to it (IPS planned next). Using this tool really speeds up the process of grabbing a certain hack and applying the patch for it.
 ### Features
 - Lists all hacks from SMWC and caches the results for later use after first run
