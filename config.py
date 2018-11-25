@@ -1,3 +1,3 @@
-MAIN_CONFIG = {
-	
+main_config = {
+	"hack_list":"./cache/hacks.json"
 }

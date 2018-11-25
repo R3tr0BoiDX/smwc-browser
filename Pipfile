@@ -9,6 +9,7 @@ verify_ssl = true
 selenium = "*"
 python-ips = "*"
 python-bps = "*"
+pick = "*"
 
 [requires]
 python_version = "3.7"
