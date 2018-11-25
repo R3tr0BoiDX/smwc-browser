@@ -1,6 +1,10 @@
 from datetime import datetime
-import time
+from os import listdir
+from os.path import isfile, join
 from urllib.parse import urlparse, parse_qs
+import time
+import urllib.request
+import zipfile
 
 hacklist = []
 
@@ -56,3 +60,29 @@ def get_entry_from_title(title):
 	for h in hacklist:
 		if h['title'] == title:
 			return h
+
+def download_hack(h,path):
+	url = h['download-link']
+
+	opener=urllib.request.build_opener()
+	opener.addheaders=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+	urllib.request.install_opener(opener)
+
+	print('Downloading file from '+url)
+	urllib.request.urlretrieve(url,path+'working.zip')
+	return path+'working.zip'
+
+def unzip_hack(path,tmpdir):
+	zip_ref = zipfile.ZipFile(path, 'r')
+	zip_ref.extractall(tmpdir)
+	zip_ref.close()
+	onlyfiles = [f for f in listdir(tmpdir) if isfile(join(tmpdir, f))]
+	return onlyfiles
+
+def apply_bps(patch_path,source_path,dest_path):
+	from bps.apply import apply_to_files
+	source_patch = open(patch_path,'rb')
+	source_rom = open(source_path,'rb')
+	dest_path = open(dest_path,'wb')
+	return apply_to_files(source_patch,source_rom,dest_path)
+	
