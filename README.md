@@ -2,7 +2,7 @@
 
 ![Picker](https://i.imgur.com/22R7Lmi.jpg)
 
-A CLI python script that will read all the entries from Super Mario World Central (it caches all the available entries on first run), let you pick any hack to apply to your rom, and automatically apply the bps file to it (IPS patches planned next). Using this tool really speeds up the process of grabbing a certain hack and applying the patch for it, epsecially if CLI/automation is more your thing.
+A CLI python script that will read all the entries from [Super Mario World Central](https://www.smwcentral.net/) (it caches all the available entries on first run), let you pick any hack to apply to your rom, and automatically apply the bps file to it. Using this tool really speeds up the process of grabbing a certain hack and applying the patch for it, epsecially if CLI/automation is more your thing.
 
 To get it up and running for now, do a good ol':
 ```
