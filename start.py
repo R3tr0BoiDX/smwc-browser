@@ -1,4 +1,5 @@
 #My Stuff
+from lib import ips
 from lib import SMWC
 
 #Deps
@@ -8,7 +9,6 @@ import shutil
 from pathlib import Path
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
-from pick import pick
 
 opts = Options()
 opts.headless = True
@@ -33,7 +33,7 @@ else:
 	    hacklist = json.load(f)
 
 SMWC.set_hack_list(hacklist['hack_list'])
-title, index = pick(SMWC.get_titles_from_json(),"Please select a Hack:")
+title = SMWC.draw_table()
 info = SMWC.get_entry_from_title(title)
 download = SMWC.download_hack(info,temp_path)
 unzip = SMWC.unzip_hack(download,temp_path)

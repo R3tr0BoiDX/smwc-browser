@@ -2,10 +2,10 @@ from datetime import datetime
 from os import listdir
 from os.path import isfile, join, isdir
 from urllib.parse import urlparse, parse_qs
+from pick import pick
 import time
 import urllib.request
 import zipfile
-import ips
 
 hacklist = []
 
@@ -96,3 +96,7 @@ def apply_bps(patch_path,source_path,dest_path):
 	
 def apply_ips(patch_path,source_path,dest_path):
 	ips.applyPatch(source_path,patch_path,dest_path)
+
+def draw_table():
+	title, index = pick(get_titles_from_json(),"Please select a Hack:")
+	return title
