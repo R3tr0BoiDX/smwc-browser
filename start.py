@@ -6,6 +6,7 @@ from lib import SMWC
 import json
 import tempfile
 import shutil
+import time
 from pathlib import Path
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
@@ -36,8 +37,8 @@ SMWC.set_hack_list(hacklist['hack_list'])
 hack = SMWC.draw_table()
 download = SMWC.download_hack(hack,temp_path)
 unzip = SMWC.unzip_hack(download,temp_path)
-output_file = output_path+hack.get('title')+'.sfc'
 for f in unzip:
+	output_file = output_path+hack.get('title')+' ('+str(int(time.time()))+').sfc'
 	if f.endswith('.bps'):
 		print('Patching '+hack.get('title')+' on to '+source_path)
 		SMWC.apply_bps(f,source_path,output_file)
