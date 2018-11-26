@@ -33,13 +33,13 @@ else:
 	    hacklist = json.load(f)
 
 SMWC.set_hack_list(hacklist['hack_list'])
-title = SMWC.draw_table()
-info = SMWC.get_entry_from_title(title)
-download = SMWC.download_hack(info,temp_path)
+hack = SMWC.draw_table()
+download = SMWC.download_hack(hack,temp_path)
 unzip = SMWC.unzip_hack(download,temp_path)
-output_file = output_path+title+'.sfc'
+output_file = output_path+hack.get('title')+'.sfc'
 for f in unzip:
 	if f.endswith('.bps'):
+		print('Patching '+hack.get('title')+' on to '+source_path)
 		SMWC.apply_bps(f,source_path,output_file)
 		print('Outputted file to: ' + output_file)
 	elif f.endswith('.ips'):

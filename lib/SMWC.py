@@ -49,13 +49,6 @@ def get_hack_list(browser,first = True,url = "https://www.smwcentral.net/?p=sect
 
 	return {"updated":time.time(), "hack_list": hacklist}
 
-def get_titles_from_json():
-	global hacklist
-	titles = []
-	for h in hacklist:
-		titles.append(h['title'])
-	return titles
-
 def get_entry_from_title(title):
 	global hacklist
 	for h in hacklist:
@@ -97,6 +90,11 @@ def apply_bps(patch_path,source_path,dest_path):
 def apply_ips(patch_path,source_path,dest_path):
 	ips.applyPatch(source_path,patch_path,dest_path)
 
+def get_title(h):
+	return h.get('title')
+
 def draw_table():
-	title, index = pick(get_titles_from_json(),"Please select a Hack:")
+	global hacklist
+	title = "Please select a Hack:"
+	title, index = pick(hacklist,title, indicator='*', options_map_func=get_title)
 	return title
