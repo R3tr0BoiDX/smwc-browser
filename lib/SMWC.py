@@ -85,8 +85,6 @@ def unzip_hack(path,tmpdir):
 				files.append(join(tmpdir,f,fd))
 		elif isfile(join(tmpdir, f)):
 			files.append(join(tmpdir, f))
-
-	print(files)
 	return files
 
 def apply_bps(patch_path,source_path,dest_path):
