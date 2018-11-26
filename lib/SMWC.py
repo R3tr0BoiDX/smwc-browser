@@ -1,10 +1,11 @@
 from datetime import datetime
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, isdir
 from urllib.parse import urlparse, parse_qs
 import time
 import urllib.request
 import zipfile
+import ips
 
 hacklist = []
 
@@ -63,21 +64,30 @@ def get_entry_from_title(title):
 
 def download_hack(h,path):
 	url = h['download-link']
+	dlpath = path+'/_smwci.zip'
 
 	opener=urllib.request.build_opener()
 	opener.addheaders=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
 	urllib.request.install_opener(opener)
 
 	print('Downloading file from '+url)
-	urllib.request.urlretrieve(url,path+'working.zip')
-	return path+'working.zip'
+	urllib.request.urlretrieve(url,dlpath)
+	return dlpath
 
 def unzip_hack(path,tmpdir):
 	zip_ref = zipfile.ZipFile(path, 'r')
 	zip_ref.extractall(tmpdir)
 	zip_ref.close()
-	onlyfiles = [f for f in listdir(tmpdir) if isfile(join(tmpdir, f))]
-	return onlyfiles
+	files = []
+	for f in listdir(tmpdir):
+		if isdir(join(tmpdir,f)):
+			for fd in listdir(join(tmpdir,f)):
+				files.append(join(tmpdir,f,fd))
+		elif isfile(join(tmpdir, f)):
+			files.append(join(tmpdir, f))
+
+	print(files)
+	return files
 
 def apply_bps(patch_path,source_path,dest_path):
 	from bps.apply import apply_to_files
@@ -86,3 +96,5 @@ def apply_bps(patch_path,source_path,dest_path):
 	dest_path = open(dest_path,'wb')
 	return apply_to_files(source_patch,source_rom,dest_path)
 	
+def apply_ips(patch_path,source_path,dest_path):
+	ips.applyPatch(source_path,patch_path,dest_path)

@@ -9,7 +9,7 @@ A CLI python script that will read all the entries from Super Mario World Centra
 - Automatically downloads, unzips, and applies bps patches
 - All output sfc files are saved and renamed to the hack title found on SMWC
 ### Planned Features
-- IPS patching
+~- IPS patching~
 - Update the cache/list from SMWC after X days
 - Customizability, add options where to save, keep bps files or delete them
 - Garbage collection, everything is stored in `/tmp` but could do better

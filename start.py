@@ -40,7 +40,9 @@ unzip = SMWC.unzip_hack(download,temp_path)
 output_file = output_path+title+'.sfc'
 for f in unzip:
 	if f.endswith('.bps'):
-		SMWC.apply_bps(temp_path+'/'+f,source_path,output_path+title+'.sfc')
-		print('Outputted file to: ' + output_path+title+'.sfc')
-
+		SMWC.apply_bps(f,source_path,output_file)
+		print('Outputted file to: ' + output_file)
+	elif f.endswith('.ips'):
+		SMWC.apply_ips(f,source_path,output_file)
+		print('Outputted file to: ' + output_file)
 quit()
