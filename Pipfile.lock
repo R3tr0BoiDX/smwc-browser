@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "de1a7dc47283225c0c297dbb43bb0c078d8ab587621074860d109d73aefa4b48"
+            "sha256": "6bc1ff5260d38bc111732c6c59ad1661a18e5aa23444a3b5e3d1dd579fa5a1e6"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,12 +16,6 @@
         ]
     },
     "default": {
-        "docopt": {
-            "hashes": [
-                "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
-            ],
-            "version": "==0.6.2"
-        },
         "pick": {
             "hashes": [
                 "sha256:7e14aca88c256160a37d98ce987b74545eccb5ab97710aa1f5bb215f650e4c43",
@@ -36,13 +30,6 @@
             ],
             "index": "pypi",
             "version": "==5"
-        },
-        "python-ips": {
-            "hashes": [
-                "sha256:3c2e5fd3afa68667b34d1150fe2fbae2330e3cb1226239d0d489664c59b00a64"
-            ],
-            "index": "pypi",
-            "version": "==2.0"
         },
         "selenium": {
             "hashes": [
