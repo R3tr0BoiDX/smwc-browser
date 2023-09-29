@@ -1,18 +1,42 @@
+import argparse
 import json
+import logging
+import sys
 import tempfile
 import time
+import zlib
 from pathlib import Path
 
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
 
-from source import smwc
+import source.smwc as smwc
 
-opts = Options()
-opts.headless = True
-assert opts.headless
+SMW_CRC32 = "B19ED489"
 
-source_path = "./source/Super Mario World (USA).sfc"
+LOG_LEVEL = logging.DEBUG
+
+
+def parse_args() -> dict:
+    parser = argparse.ArgumentParser(description="Super Mario World Central Browser")
+    parser.add_argument(
+        "sfc_path", type=str, help="Path to the Super Mario World (USA) SFC file"
+    )
+
+    return parser.parse_args()
+
+
+def crc32(file: Path) -> str:
+    return "%X" % (zlib.crc32(open(file, "rb").read()) & 0xFFFFFFFF)
+
+
+def main():
+    logging.basicConfig(level=LOG_LEVEL)
+    args = parse_args()
+
+    if crc32(args.sfc_path) != SMW_CRC32:
+        logging.critical("Given SFC has incorrect CRC32. Expected: %s", SMW_CRC32)
+        sys.exit(1)
+
+
 temp_path = tempfile.mkdtemp()
 output_path = "./output/"
 hacklist = Path(hack_path)
@@ -44,3 +68,6 @@ for f in unzip:
     elif f.endswith(".ips"):
         smwc.apply_ips(f, source_path, output_file)
         print("Outputted file to: " + output_file)
+
+if __name__ == "__main__":
+    main()

@@ -1,30 +1,121 @@
+import re
 import time
 import urllib.request
 import zipfile
+from dataclasses import dataclass
 from datetime import datetime
 from os import listdir
 from os.path import isdir, isfile, join
 from urllib.parse import parse_qs, urlparse
 
-from pick import pick
+import requests
+from bs4 import BeautifulSoup
 
-hacklist = []
+BASE_URL = "https://www.smwcentral.net/?p=section&s=smwhacks"
+
+YES_NO_DICT = {"yes": True, "no": False}
+DATETIME_PATTERN = "%Y-%m-%dT%H:%M:%S"
 
 
-def set_hack_list(hl):
-    global hacklist
-    hacklist = hl
+@dataclass
+class HackEntry:
+    """This represent a table entry for a hack on SMW Central."""
+
+    name: str
+    date: datetime
+    demo: bool
+    featured: bool
+    length: int
+    hack_type: str
+    author: str
+    rating: float
+    size: str
+    download_count: int
+    download_url: str
 
 
-def get_hack_list(
-    browser, first=True, url="https://www.smwcentral.net/?p=section&s=smwhacks"
-):
-    global hacklist
-    if first:
-        hacklist = []
-        print("Opening SMWC to check for new hacks...")
+def get_hack_list(url=BASE_URL):
+    # Get website data
+    response = requests.get(url)
 
-    browser.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Find the first div called "list-content"
+        list_content_div = soup.find("div", id="list-content")
+
+        # Check if the element was found
+        if list_content_div:
+            # Find the first table element within the div
+            entries_table = list_content_div.find("table")
+
+            # Check if the table element was found
+            if entries_table:
+                tbody = entries_table.find("tbody")
+
+                # Check if the <tbody> element was found
+                if tbody:
+                    entries = tbody.find_all("tr")
+
+                    # Iterate over each entry
+                    for entry in entries:
+                        process_entry(entry)
+
+                else:
+                    print("tbody not found in table.")
+
+            else:
+                print("Table with entries was not found.")
+        else:
+            print("The div with id='list-content' was not found.")
+
+
+def process_entry(table_entry):
+    td = table_entry.find("tr").find_all("td")
+
+    name = td[0].find("a").get_text()
+    date = datetime.strptime(td[0].find("time")["datetime"], DATETIME_PATTERN)
+    demo = yes_no_to_bool(td[1].get_text())
+    featured = yes_no_to_bool(td[2].get_text())
+    length = extract_number(td[3].get_text())
+    hack_type = td[4].get_text()
+    author = td[5].find("a").get_text()
+    rating = float(td[6].get_text())
+    size = td[7].get_text()
+    download_count = extract_number(td[8].find("span").get_text())
+    download_url = td[8].find("a")["href"]
+
+    # Remove leading // if present
+    if download_url.startswith("//"):
+        download_url = download_url[2:]
+
+    entry = HackEntry(
+        name,
+        date,
+        demo,
+        featured,
+        length,
+        hack_type,
+        author,
+        rating,
+        size,
+        download_count,
+        download_url,
+    )
+
+    print(entry)
+
+
+def extract_number(text: str) -> int:
+    return re.findall(r"\d+", text)[0]
+
+
+def yes_no_to_bool(value: str) -> bool:
+    result = YES_NO_DICT.get(value.lower(), None)
+    return result if result is not None else False
+
+
+def old(url):
     print("Trying " + url)
     hackrows = browser.find_elements_by_xpath(
         "//div[@id='list_content']//table//tr[position()>1]"
@@ -57,15 +148,15 @@ def get_hack_list(
             "Found another page, trying page "
             + parse_qs(urlparse(nextpage).query).get("n")[0]
         )
-        return get_hack_list(browser, False, nextpage)
-    except Exception as e:
-        print("")
+        # return get_hack_list(browser, False, nextpage)
+    except Exception as ex:
+        print(ex)
 
     return {"updated": time.time(), "hack_list": hacklist}
 
 
 def get_entry_from_title(title):
-    global hacklist
+    hacklist = []
     for h in hacklist:
         if h["title"] == title:
             return h
@@ -113,7 +204,8 @@ def apply_bps(patch_path, source_path, dest_path):
 
 
 def apply_ips(patch_path, source_path, dest_path):
-    ips.applyPatch(source_path, patch_path, dest_path)
+    # ips.applyPatch(source_path, patch_path, dest_path)
+    pass
 
 
 def get_title(h):
@@ -122,6 +214,14 @@ def get_title(h):
 
 def draw_table():
     global hacklist
-    title = "Please select a Hack:"
-    title, index = pick(hacklist, title, indicator="*", options_map_func=get_title)
+    title = "Please select a hack:"
+    # title, index = pick(hacklist, title, indicator="*", options_map_func=get_title)
     return title
+
+
+if __name__ == "__main__":
+    with open("example-entry.html", "r", encoding="utf-8") as file:
+        file_content = file.read()
+
+    soup = BeautifulSoup(file_content, "html.parser")
+    process_entry(soup)

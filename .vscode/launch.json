@@ -6,6 +6,7 @@
             "type": "python",
             "request": "launch",
             "program": "source/main.py",
+            "args": ["data/smw.sfc"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
