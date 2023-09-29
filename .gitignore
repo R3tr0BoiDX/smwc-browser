@@ -1,4 +1,4 @@
 cache/hacks.json
-source/*
+data/*
 output/*
 .venv/*
