@@ -1,17 +1,13 @@
-import re
-import urllib.request
-import zipfile
-from datetime import datetime
-from os import listdir
-from os.path import isdir, isfile, join
-from typing import List
 import logging
+import re
+from datetime import datetime
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 
-from source.smwc.entry import Difficulty, HackEntry, difficulty_string_to_enum
 import source.smwc.params as params
+from source.smwc.entry import Difficulty, HackEntry, difficulty_string_to_enum
 
 BASE_URL = "https://www.smwcentral.net/?p=section&s=smwhacks"
 TIMEOUT = 10  # sec
@@ -30,23 +26,28 @@ def get_hack_list(
     difficulty: Difficulty = None,
     description: str = None,
 ):
+    # Get filter parameter string if any
     filter_params = params.form_filter_params(
         name, authors, tags, demo, featured, difficulty, description
     )
-
     filter_params = "&".join(filter_params).replace(" ", "+")
     if filter_params:
+        # add leading '&' which is not added by join
         filter_params = "&" + filter_params
 
+    # Add filter parameter to given URL if any
     url = url + filter_params
 
     # Get website data
     response = requests.get(url, timeout=TIMEOUT)
 
+    hacks = []
     if response.status_code == 200:
+        # Soup up HTML response
         soup = BeautifulSoup(response.text, "html.parser")
-        list_content_div = soup.find("div", id="list-content")
 
+        # Navigate through HTML structure
+        list_content_div = soup.find("div", id="list-content")
         if not list_content_div:
             print("The div with id='list-content' was not found.")
         else:
@@ -63,7 +64,10 @@ def get_hack_list(
                     tr_entries = tbody.find_all("tr")
 
                     for tr_entry in tr_entries:
-                        process_entry(tr_entry)
+                        # Extract and wrap information of table entry in a HackEntry object
+                        hacks.append(process_entry(tr_entry))
+
+    return hacks
 
 
 def process_entry(table_entry):
@@ -94,11 +98,11 @@ def process_entry(table_entry):
             Difficulty.NA.value[0],
         )
 
-    # Remove leading // if present
+    # Add scheme if leading // is present
     if download_url.startswith("//"):
-        download_url = download_url[2:]
+        download_url = "https:" + download_url
 
-    hack_entry = HackEntry(
+    return HackEntry(
         name,
         date,
         demo,
@@ -112,9 +116,6 @@ def process_entry(table_entry):
         download_url,
     )
 
-    # todo
-    print(hack_entry)
-
 
 def extract_number(text: str) -> int:
     return re.findall(r"\d+", text)[0]
@@ -123,38 +124,6 @@ def extract_number(text: str) -> int:
 def yes_no_to_bool(value: str) -> bool:
     result = YES_NO_DICT.get(value.lower(), None)
     return result if result is not None else False
-
-
-def download_hack(h, path):
-    url = h["download-link"]
-    dlpath = path + "/_smwci.zip"
-
-    opener = urllib.request.build_opener()
-    opener.addheaders = [
-        (
-            "User-Agent",
-            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36",
-        )
-    ]
-    urllib.request.install_opener(opener)
-
-    print("Downloading file from " + url)
-    urllib.request.urlretrieve(url, dlpath)
-    return dlpath
-
-
-def unzip_hack(path, tmpdir):
-    zip_ref = zipfile.ZipFile(path, "r")
-    zip_ref.extractall(tmpdir)
-    zip_ref.close()
-    files = []
-    for f in listdir(tmpdir):
-        if isdir(join(tmpdir, f)):
-            for fd in listdir(join(tmpdir, f)):
-                files.append(join(tmpdir, f, fd))
-        elif isfile(join(tmpdir, f)):
-            files.append(join(tmpdir, f))
-    return files
 
 
 def apply_bps(patch_path, source_path, dest_path):

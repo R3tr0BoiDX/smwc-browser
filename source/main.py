@@ -4,8 +4,6 @@ import sys
 import zlib
 from pathlib import Path
 
-from source.smwc.crawler import get_hack_list
-
 SMW_CRC32 = "B19ED489"
 
 LOG_LEVEL = logging.DEBUG
@@ -33,7 +31,6 @@ def main():
         sys.exit(1)
 
 
-# temp_path = tempfile.mkdtemp()
 # output_path = "./output/"
 # hacklist = Path(hack_path)
 
@@ -66,4 +63,4 @@ def main():
 #         print("Outputted file to: " + output_file)
 
 if __name__ == "__main__":
-    get_hack_list()
+    pass
