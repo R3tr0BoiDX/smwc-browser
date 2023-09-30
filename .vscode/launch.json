@@ -5,7 +5,7 @@
             "name": "Run main",
             "type": "python",
             "request": "launch",
-            "program": "source/main.py",
+            "module": "source.main",
             "args": ["data/smw.sfc"],
             "console": "integratedTerminal",
             "justMyCode": true
