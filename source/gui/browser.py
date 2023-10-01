@@ -5,8 +5,7 @@ from source.product_name import LONG_NAME
 
 pygame.init()
 
-WIDTH, HEIGHT = 1280, 720
-MENU_HEIGHT = HEIGHT
+WIDTH, HEIGHT = 1280, 1000
 
 # Colors
 BG_COLOR = (29, 30, 38)
@@ -23,6 +22,16 @@ FONT_SIZE_DETAILS = 16
 FONT_TITLE = pygame.font.Font("media/fonts/retro_gaming.ttf", FONT_SIZE_TITLE)
 FONT_DETAILS = pygame.font.Font("media/fonts/retro_gaming.ttf", FONT_SIZE_DETAILS)
 
+# Header
+LOGO_HEIGHT = 96
+LOGO_PADDING_Y = 16
+LOGO_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
+DESCRIPTION_OFFSET = (16, 24)
+
+# Footer
+FOOTER_HEIGHT = 48
+FOOTER_OFFSET = (24, 56)
+
 # Separator
 SEPARATOR_OFFSET = 16  # x
 
@@ -31,7 +40,8 @@ CURSOR_OFFSET = (SEPARATOR_OFFSET, 16)  # x, y
 CURSOR_SCALE_FACTOR = 2
 SELECTION_INDENT = 16
 
-# Menu entry
+# Menu
+MENU_HEIGHT = HEIGHT - LOGO_TOTAL - FOOTER_HEIGHT
 MENU_ENTRY_HEIGHT = 96  # px
 
 # Check box
@@ -52,18 +62,9 @@ BACKGROUND_IMAGE = pygame.image.load("media/images/background.png")
 CHECKBOX_OFF_IMAGE = pygame.image.load("media/images/checkbox_off.png")
 CHECKBOX_ON_IMAGE = pygame.image.load("media/images/checkbox_on.png")
 CURSOR_IMAGE = pygame.image.load("media/images/cursor.png")
-
-# Get the dimensions of the background image
-bg_width, bg_height = BACKGROUND_IMAGE.get_size()
-
-hack_list = crawler.get_hack_list()
-
-selected_entry = 0
-scroll_offset = 0
-
-# Initialize screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption(LONG_NAME)
+LOGO_IMAGE = pygame.image.load("media/images/logo.png")
+Y_BUTTON_IMAGE = pygame.image.load("media/images/y_button.png")
+F_KEY_IMAGE = pygame.image.load("media/images/f_key.png")
 
 
 def scale_image(image, scale_factor):
@@ -72,9 +73,9 @@ def scale_image(image, scale_factor):
     return pygame.transform.scale(image, (scaled_width, scaled_height))
 
 
-def render_text(text, font, color, x, y):
+def draw_text(text, font, color, pos):
     text_rendered = font.render(text, True, color)
-    text_rect = text_rendered.get_rect(topleft=(x, y))
+    text_rect = text_rendered.get_rect(topleft=pos)
     screen.blit(text_rendered, text_rect)
 
 
@@ -87,9 +88,24 @@ def draw_checkbox(state: bool, entry_y_pos: int, offset_x: int):
 CHECKBOX_ON_IMAGE = scale_image(CHECKBOX_ON_IMAGE, CHECK_BOX_SCALE_FACTOR)
 CHECKBOX_OFF_IMAGE = scale_image(CHECKBOX_OFF_IMAGE, CHECK_BOX_SCALE_FACTOR)
 CURSOR_IMAGE = scale_image(CURSOR_IMAGE, CURSOR_SCALE_FACTOR)
+Y_BUTTON_IMAGE = scale_image(Y_BUTTON_IMAGE, 3)
+F_KEY_IMAGE = scale_image(F_KEY_IMAGE, 3)
+
+
+# Get the dimensions of the background image
+bg_width, bg_height = BACKGROUND_IMAGE.get_size()
+
+# Initialize screen
+pygame.display.set_caption(LONG_NAME)
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+# Get hack list
+hack_list = crawler.get_hack_list()
 
 # Main loop
 running = True
+selected_entry = 0
+scroll_offset = 0
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -119,48 +135,70 @@ while running:
         for y in range(0, HEIGHT, bg_height):
             screen.blit(BACKGROUND_IMAGE, (x, y))
 
-    # Render table-like view for hack_list
+    # Draw header
+    screen.blit(LOGO_IMAGE, ((WIDTH - LOGO_IMAGE.get_width()) // 2, LOGO_PADDING_Y))
+    draw_text(
+        "Demo | Featured | Hack details",
+        FONT_DETAILS,
+        DETAIL_NORMAL,
+        (DESCRIPTION_OFFSET[0], LOGO_TOTAL - DESCRIPTION_OFFSET[1]),
+    )
+
+    # Draw footer
+    footer_y = HEIGHT - Y_BUTTON_IMAGE.get_width() - FOOTER_OFFSET[1]
+    screen.blit(Y_BUTTON_IMAGE, (FOOTER_OFFSET[0], footer_y))
+
+    slash_x = FOOTER_OFFSET[0] + Y_BUTTON_IMAGE.get_width()
+    draw_text("/", FONT_DETAILS, DETAIL_NORMAL, (slash_x, footer_y))
+
+    f_key_x = slash_x + FONT_DETAILS.size("/")[0]
+    screen.blit(F_KEY_IMAGE, (f_key_x, footer_y))
+
+    filter_text_x = f_key_x + F_KEY_IMAGE.get_width()
+    draw_text(" Apply filter", FONT_DETAILS, DETAIL_NORMAL, (filter_text_x, footer_y))
+
+    # Draw hack list
     for i in range(
         scroll_offset,
         min(len(hack_list), scroll_offset + MENU_HEIGHT // MENU_ENTRY_HEIGHT),
     ):
         entry = hack_list[i]
         is_selected = i == selected_entry
-        entry_y = (i - scroll_offset) * MENU_ENTRY_HEIGHT
+        entry_y = LOGO_TOTAL + (i - scroll_offset) * MENU_ENTRY_HEIGHT
 
         indent = SELECTION_INDENT if is_selected else 0
 
         # name
-        render_text(
+        draw_text(
             entry.name,
             FONT_TITLE,
             ENTRY_NORMAL if not is_selected else ENTRY_SELECTED,
-            TEXT_OFFSET + indent,
-            entry_y + NAME_OFFSET,
+            (TEXT_OFFSET + indent, entry_y + NAME_OFFSET),
         )
 
         # author
         name_text_width, name_text_height = FONT_TITLE.size(entry.name)
-        render_text(
+        draw_text(
             f"by {entry.author}",
             FONT_DETAILS,
             ENTRY_NORMAL if not is_selected else ENTRY_SELECTED,
-            name_text_width + TEXT_OFFSET + AUTHOR_OFFSET + indent,
-            entry_y + NAME_OFFSET + 8,
+            (
+                name_text_width + TEXT_OFFSET + AUTHOR_OFFSET + indent,
+                entry_y + NAME_OFFSET + 8,
+            )
             # todo: replace 8 with actual calculated value, so title and line form one line
         )
 
         # difficulty
-        render_text(
+        draw_text(
             entry.difficulty.value[0],
             FONT_DETAILS,
             DETAIL_NORMAL if not is_selected else DETAIL_SELECTED,
-            TEXT_OFFSET + indent,
-            entry_y + DIFFICULTY_OFFSET,
+            (TEXT_OFFSET + indent, entry_y + DIFFICULTY_OFFSET),
         )
 
         # details
-        render_text(
+        draw_text(
             (
                 f"{str(entry.rating) + '/5.0' if entry.rating else 'No ratings given'} | "
                 f"{entry.length} {'exit' if entry.length == 1 else 'exits'} | "
@@ -168,8 +206,7 @@ while running:
             ),
             FONT_DETAILS,
             DETAIL_NORMAL if not is_selected else DETAIL_SELECTED,
-            TEXT_OFFSET + indent,
-            entry_y + DETAIL_OFFSET,
+            (TEXT_OFFSET + indent, entry_y + DETAIL_OFFSET),
         )
 
         draw_checkbox(entry.demo, entry_y, CHECKBOX_DEMO_OFFSET + indent)
