@@ -1,3 +1,4 @@
+import glob
 import logging
 import os
 import tempfile
@@ -7,6 +8,8 @@ from pathlib import Path
 import requests
 
 TIMEOUT = 10  # sec
+
+PATCH_FILE_FORMATS = [".ips", ".bps"]
 
 
 def download_file(file_url: str) -> Path:
@@ -43,3 +46,22 @@ def unzip_file(zip_path: Path) -> Path:
         zip_ref.extractall(directory_path)
 
     return Path(directory_path)
+
+
+def find_files_by_extensions(directory: Path, file_extensions: list) -> list:
+    """
+    Search for files with specified extensions in a directory and its subdirectories.
+
+    Args:
+        directory (str): The directory to search in.
+        file_extensions (list): A list of file extensions to search for.
+
+    Returns:
+        list: A list of matching file paths.
+    """
+    matching_files = []
+    for extension in file_extensions:
+        matching_files.extend(
+            glob.glob(os.path.join(directory, "**", extension), recursive=True)
+        )
+    return matching_files
