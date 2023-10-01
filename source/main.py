@@ -8,6 +8,7 @@ SMW_CRC32 = "B19ED489"
 
 LOG_LEVEL = logging.DEBUG
 
+import source.gui.browser
 
 def parse_args() -> dict:
     parser = argparse.ArgumentParser(description="Super Mario World Central Browser")

@@ -38,3 +38,5 @@ def difficulty_string_to_enum(value: str) -> Difficulty:
     for difficulty_enum in Difficulty:
         if difficulty_enum.value[0] == value:
             return difficulty_enum
+
+    raise ValueError(f"Cannot convert '{value}' to a Difficulty type")

@@ -25,7 +25,7 @@ def get_hack_list(
     featured: bool = None,
     difficulty: Difficulty = None,
     description: str = None,
-):
+) -> List[HackEntry]:
     # Get filter parameter string if any
     filter_params = params.form_filter_params(
         name, authors, tags, demo, featured, difficulty, description
@@ -83,7 +83,8 @@ def process_entry(table_entry):
     author = (
         td[5].find("a").get_text() if td[5].find("a") is not None else td[5].get_text()
     )
-    rating = float(td[6].get_text()) if td[6].get_text().isdigit() else None
+
+    rating = float(td[6].get_text()) if is_float(td[6].get_text()) else None
     size = td[7].get_text()
     download_count = extract_number(td[8].find("span").get_text())
     download_url = td[8].find("a")["href"]
@@ -93,10 +94,11 @@ def process_entry(table_entry):
         difficulty = difficulty_string_to_enum(difficulty)
     except ValueError:
         logging.warning(
-            "'%s' is not a valid difficulty. Using %s",
+            "'%s' is not a valid difficulty or multiple. Using %s",
             difficulty,
             Difficulty.NA.value[0],
         )
+        difficulty = Difficulty.NA
 
     # Add scheme if leading // is present
     if download_url.startswith("//"):
@@ -117,8 +119,16 @@ def process_entry(table_entry):
     )
 
 
+def is_float(input_str):
+    try:
+        float(input_str)
+        return True
+    except ValueError:
+        return False
+
+
 def extract_number(text: str) -> int:
-    return re.findall(r"\d+", text)[0]
+    return int(re.findall(r"\d+", text)[0])
 
 
 def yes_no_to_bool(value: str) -> bool:

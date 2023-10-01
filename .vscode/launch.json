@@ -7,7 +7,7 @@
             "request": "launch",
             "module": "source.main",
             "args": ["data/smw.sfc"],
-            "console": "integratedTerminal",
+            "console": "externalTerminal",
             "justMyCode": true
         },
         {
