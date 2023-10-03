@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 import zipfile
 from pathlib import Path
+import urllib.parse
 
 import requests
 
@@ -28,29 +29,43 @@ def download_and_run(url: str):
         url (str): The URL of the file to download.
     """
     try:
-        file_name = os.path.basename(url)
-        print(file_name)
-        # todo: check if file is already in library (with download and patch again option)
+        # Extract the filename, remove extension, and decode URL-encoded characters in one line
+        file_name = (
+            f"{urllib.parse.unquote(os.path.splitext(os.path.basename(url))[0])}.sfc"
+        )
+        file_path = get_library_path_for_file(file_name)
 
-        # download the file
-        file_path = download_file(url)
+        print(file_path)
 
-        # extract the file
-        extracted_path = unzip_file(file_path)
+        # check if the file is already in the library
+        if file_path.is_file():
+            logging.info("File '%s' already in library", file_name)
+            run_patched_file(file_path)
+        else:
+            logging.info("File '%s' not in library, download and patching it", file_name)
 
-        # find the patch files
-        patch_files = find_files_by_extensions(extracted_path, PATCH_FILE_FORMATS)
+            downloaded_file = download_file(url)
+            extracted_path = unzip_file(downloaded_file)
+            patch_files = find_files_by_extensions(extracted_path, PATCH_FILE_FORMATS)
 
-        # apply first found patch file
-        # todo: if multiple, create browser to select which patch to apply
-        if patch_files:
-            try:
-                patched_file = apply_patch(patch_files[0], "lol.sfc")
-                run_patched_file(patched_file)
-            except (CorruptFile, NotADirectoryError) as error:
-                logging.error(error)
+            # apply first found patch file
+            # todo: if multiple, create browser to select which patch to apply
+            if patch_files:
+                try:
+                    apply_patch(patch_files[0], file_path)
+                    run_patched_file(file_path)
+                except (CorruptFile, NotADirectoryError) as error:
+                    logging.error(error)
     except requests.exceptions.HTTPError as error:
         logging.error(error)
+
+
+def get_library_path_for_file(file_name: str) -> Path:
+    lib_path = config.Config().get_library_path()
+    if not lib_path.is_dir():
+        raise NotADirectoryError(f"Library path '{lib_path}' is not a directory!")
+
+    return lib_path.joinpath(file_name)
 
 
 def download_file(file_url: str) -> Path:
@@ -134,7 +149,7 @@ def find_files_by_extensions(directory: Path, file_extensions: list) -> list:
     return matching_files
 
 
-def apply_patch(patch_path: Path, dest_file_name: str) -> Path:
+def apply_patch(patch_path: Path, dest_path: str) -> Path:
     """
     Applies a patch file to a target file.
 
@@ -144,13 +159,7 @@ def apply_patch(patch_path: Path, dest_file_name: str) -> Path:
     Returns:
         Path: The path to the patched file.
     """
-
     source_path = arguments.Arguments().get_sfc_path()
-
-    lib_path = config.Config().get_library_path()
-    if not lib_path.is_dir():
-        raise NotADirectoryError(f"Library path '{lib_path}' is not a directory!")
-    dest_path = lib_path.joinpath(dest_file_name)
 
     # IPS patches
     if str(patch_path).endswith(".ips"):
@@ -168,20 +177,6 @@ def apply_patch(patch_path: Path, dest_file_name: str) -> Path:
     logging.info(
         "Patched '%s' to '%s', saved as '%s'", patch_path, source_path, dest_path
     )
-    return Path(dest_path)
-
-
-def copy_patched_file_to_library(patched_file: Path) -> Path:
-    """
-    Copies a patched file to the library.
-
-    Args:
-        patched_file (Path): The path to the patched file.
-
-    Returns:
-        Path: The new path to the patched file.
-    """
-    return patched_file
 
 
 def run_patched_file(file_path: Path):
@@ -193,7 +188,9 @@ def run_patched_file(file_path: Path):
     """
     logging.info("Trying to run %s", file_path)
     try:
-        subprocess.run([config.Config().get_launch_program_path(), file_path], check=True)
+        subprocess.run(
+            [config.Config().get_launch_program_path(), file_path], check=True
+        )
         logging.info("Launch program exited")
     except subprocess.CalledProcessError as error:
         logging.error(error)

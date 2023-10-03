@@ -9,7 +9,7 @@ from source.product_name import LONG_NAME
 
 pygame.init()
 
-WIDTH, HEIGHT = 1280, 1000
+WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 
 # Colors
 BG_COLOR = (29, 30, 38)
@@ -69,6 +69,7 @@ CURSOR_IMAGE = pygame.image.load("media/images/cursor.png")
 LOGO_IMAGE = pygame.image.load("media/images/logo.png")
 Y_BUTTON_IMAGE = pygame.image.load("media/images/y_button.png")
 F_KEY_IMAGE = pygame.image.load("media/images/f_key.png")
+ICON_IMAGE = pygame.image.load("media/images/icon.png")
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +147,8 @@ def draw_header(screen: pygame.Surface):
 
 
 def draw_footer(screen: pygame.Surface):
+    # todo: idea: create logger, that sets the bottom text in footer
+
     footer_y = HEIGHT - Y_BUTTON_IMAGE.get_width() - FOOTER_OFFSET[1]
     screen.blit(Y_BUTTON_IMAGE, (FOOTER_OFFSET[0], footer_y))
 
@@ -260,7 +263,7 @@ def draw(
     # Draw GUI
     bg_pos = draw_background(screen, bg_pos)
     draw_header(screen)
-    draw_footer(screen)
+    # draw_footer(screen)  # todo: enable again once filter screen is build
     draw_hack_list(screen, selected_entry, scroll_offset, hack_list)
 
     # Update the display
@@ -297,7 +300,9 @@ def handle_events(selected_entry: int, scroll_offset: int, hack_list: list):
 def run():
     # Initialize screen
     pygame.display.set_caption(LONG_NAME)
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_icon(ICON_IMAGE)
+    # screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     # Get hack list
     hack_list = crawler.get_hack_list()
