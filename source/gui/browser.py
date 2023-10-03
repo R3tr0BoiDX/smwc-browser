@@ -1,6 +1,10 @@
-import pygame
 import sys
-import source.smwc.crawler as crawler
+import logging
+
+import pygame
+
+from source.smwc import crawler
+from source import file
 from source.product_name import LONG_NAME
 
 pygame.init()
@@ -25,7 +29,7 @@ FONT_DETAILS = pygame.font.Font("media/fonts/retro_gaming.ttf", FONT_SIZE_DETAIL
 # Header
 LOGO_HEIGHT = 96
 LOGO_PADDING_Y = 16
-LOGO_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
+HEADER_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
 DESCRIPTION_OFFSET = (16, 24)
 
 # Footer
@@ -41,7 +45,7 @@ CURSOR_SCALE_FACTOR = 2
 SELECTION_INDENT = 16
 
 # Menu
-MENU_HEIGHT = HEIGHT - LOGO_TOTAL - FOOTER_HEIGHT
+MENU_HEIGHT = HEIGHT - HEADER_TOTAL - FOOTER_HEIGHT
 MENU_ENTRY_HEIGHT = 96  # px
 
 # Check box
@@ -66,23 +70,60 @@ LOGO_IMAGE = pygame.image.load("media/images/logo.png")
 Y_BUTTON_IMAGE = pygame.image.load("media/images/y_button.png")
 F_KEY_IMAGE = pygame.image.load("media/images/f_key.png")
 
+logger = logging.getLogger(__name__)
 
-def scale_image(image, scale_factor):
+
+def scale_image(image: pygame.Surface, scale_factor: float) -> pygame.Surface:
     scaled_width = image.get_width() * scale_factor
     scaled_height = image.get_height() * scale_factor
     return pygame.transform.scale(image, (scaled_width, scaled_height))
 
 
-def draw_text(text, font, color, pos):
+def draw_text(
+    screen: pygame.Surface, text: str, font: pygame.font.Font, color: tuple, pos: tuple
+) -> None:
     text_rendered = font.render(text, True, color)
     text_rect = text_rendered.get_rect(topleft=pos)
     screen.blit(text_rendered, text_rect)
 
 
-def draw_checkbox(state: bool, entry_y_pos: int, offset_x: int):
+def draw_checkbox(
+    screen: pygame.Surface, state: bool, entry_y_pos: int, offset_x: int
+) -> None:
     image = CHECKBOX_ON_IMAGE if state else CHECKBOX_OFF_IMAGE
     offset_y = entry_y_pos + CHECKBOX_OFFSET
     screen.blit(image, (offset_x, offset_y))
+
+
+# Get the dimensions of the background image
+bg_width, bg_height = BACKGROUND_IMAGE.get_size()
+
+# Define the speed at which the background scrolls
+SCROLL_SPEED_X = 1
+SCROLL_SPEED_Y = 1
+
+
+# Function to draw and scroll the background
+def draw_background(screen: pygame.Surface, last_pos):
+    x, y = last_pos
+
+    # Scroll the background
+    x += SCROLL_SPEED_X
+    y += SCROLL_SPEED_Y
+
+    # Wrap the background horizontally
+    if x > 0:
+        x = -bg_width
+
+    # Wrap the background vertically
+    if y > 0:
+        y = -bg_height
+
+    for i in range(x, WIDTH, bg_width):
+        for j in range(y, HEIGHT, bg_height):
+            screen.blit(BACKGROUND_IMAGE, (i, j))
+
+    return x, y
 
 
 CHECKBOX_ON_IMAGE = scale_image(CHECKBOX_ON_IMAGE, CHECK_BOX_SCALE_FACTOR)
@@ -92,24 +133,146 @@ Y_BUTTON_IMAGE = scale_image(Y_BUTTON_IMAGE, 3)
 F_KEY_IMAGE = scale_image(F_KEY_IMAGE, 3)
 
 
-# Get the dimensions of the background image
-bg_width, bg_height = BACKGROUND_IMAGE.get_size()
-
-# Initialize screen
-pygame.display.set_caption(LONG_NAME)
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-# Get hack list
-hack_list = crawler.get_hack_list()
-
 # Main loop
-running = True
-selected_entry = 0
-scroll_offset = 0
-while running:
+def draw_header(screen: pygame.Surface):
+    screen.blit(LOGO_IMAGE, ((WIDTH - LOGO_IMAGE.get_width()) // 2, LOGO_PADDING_Y))
+    draw_text(
+        screen,
+        "Demo | Featured | Hack details",
+        FONT_DETAILS,
+        DETAIL_NORMAL,
+        (DESCRIPTION_OFFSET[0], HEADER_TOTAL - DESCRIPTION_OFFSET[1]),
+    )
+
+
+def draw_footer(screen: pygame.Surface):
+    footer_y = HEIGHT - Y_BUTTON_IMAGE.get_width() - FOOTER_OFFSET[1]
+    screen.blit(Y_BUTTON_IMAGE, (FOOTER_OFFSET[0], footer_y))
+
+    slash_x = FOOTER_OFFSET[0] + Y_BUTTON_IMAGE.get_width()
+    draw_text(screen, "/", FONT_DETAILS, DETAIL_NORMAL, (slash_x, footer_y))
+
+    f_key_x = slash_x + FONT_DETAILS.size("/")[0]
+    screen.blit(F_KEY_IMAGE, (f_key_x, footer_y))
+
+    filter_text_x = f_key_x + F_KEY_IMAGE.get_width()
+    draw_text(
+        screen, ": Apply filter", FONT_DETAILS, DETAIL_NORMAL, (filter_text_x, footer_y)
+    )
+
+
+def draw_hack_list(
+    screen: pygame.Surface, selected_entry: int, scroll_offset: int, hack_list: list
+):
+    for i in range(
+        scroll_offset,
+        min(len(hack_list), scroll_offset + MENU_HEIGHT // MENU_ENTRY_HEIGHT),
+    ):
+        entry = hack_list[i]
+        is_selected = i == selected_entry
+        entry_y = HEADER_TOTAL + (i - scroll_offset) * MENU_ENTRY_HEIGHT
+        indent = SELECTION_INDENT if is_selected else 0
+
+        # name
+        draw_text(
+            screen,
+            entry.name,
+            FONT_TITLE,
+            ENTRY_NORMAL if not is_selected else ENTRY_SELECTED,
+            (TEXT_OFFSET + indent, entry_y + NAME_OFFSET),
+        )
+
+        # author
+        name_text_width, _ = FONT_TITLE.size(entry.name)
+        draw_text(
+            screen,
+            f"by {entry.author}",
+            FONT_DETAILS,
+            ENTRY_NORMAL if not is_selected else ENTRY_SELECTED,
+            (
+                name_text_width + TEXT_OFFSET + AUTHOR_OFFSET + indent,
+                entry_y + NAME_OFFSET + 8,
+            )
+            # todo: replace 8 with actual calculated value, so title and line form one line
+        )
+
+        # difficulty
+        draw_text(
+            screen,
+            entry.difficulty.value[0],
+            FONT_DETAILS,
+            DETAIL_NORMAL if not is_selected else DETAIL_SELECTED,
+            (TEXT_OFFSET + indent, entry_y + DIFFICULTY_OFFSET),
+        )
+
+        # details
+        draw_text(
+            screen,
+            (
+                f"{str(entry.rating) + '/5.0' if entry.rating else 'No ratings given'} | "
+                f"{entry.length} {'exit' if entry.length == 1 else 'exits'} | "
+                f"{entry.download_count} downloads | {entry.date.strftime('%c')} | {entry.size}"
+            ),
+            FONT_DETAILS,
+            DETAIL_NORMAL if not is_selected else DETAIL_SELECTED,
+            (TEXT_OFFSET + indent, entry_y + DETAIL_OFFSET),
+        )
+
+        draw_checkbox(screen, entry.demo, entry_y, CHECKBOX_DEMO_OFFSET + indent)
+        draw_checkbox(
+            screen, entry.featured, entry_y, CHECKBOX_FEATURED_OFFSET + indent
+        )
+
+        # Render red triangle next to the selected entry
+        if is_selected:
+            draw_cursor(screen, entry_y, indent)
+
+        # Draw a white separator line between entries
+        draw_separator(screen, entry_y)
+
+
+def draw_cursor(screen: pygame.Surface, entry_y: int, indent: int):
+    cursor_offset_y = entry_y + CURSOR_OFFSET[1] + (CURSOR_IMAGE.get_height() // 2)
+    screen.blit(CURSOR_IMAGE, (CURSOR_OFFSET[0] + indent, cursor_offset_y))
+
+
+def draw_separator(screen: pygame.Surface, entry_y: int):
+    separator_y = entry_y + MENU_ENTRY_HEIGHT
+    pygame.draw.line(
+        screen,
+        SEPARATOR_COLOR,
+        (SEPARATOR_OFFSET, separator_y),
+        (WIDTH - SEPARATOR_OFFSET, separator_y),
+        1,
+    )
+
+
+def draw(
+    screen: pygame.Surface,
+    selected_entry: int,
+    scroll_offset: int,
+    hack_list: list,
+    bg_pos: tuple,
+):
+    # Clear the screen
+    screen.fill(BG_COLOR)
+
+    # Draw GUI
+    bg_pos = draw_background(screen, bg_pos)
+    draw_header(screen)
+    draw_footer(screen)
+    draw_hack_list(screen, selected_entry, scroll_offset, hack_list)
+
+    # Update the display
+    pygame.display.flip()
+
+    return bg_pos
+
+
+def handle_events(selected_entry: int, scroll_offset: int, hack_list: list):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            return False, selected_entry, scroll_offset
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 selected_entry = max(0, selected_entry - 1)
@@ -123,115 +286,32 @@ while running:
                         selected_entry - MENU_HEIGHT // MENU_ENTRY_HEIGHT + 1,
                     )
             elif event.key == pygame.K_RETURN:
-                print(f"Selected: {hack_list[selected_entry].name}")
+                logger.info("Selected: %s", hack_list[selected_entry].name)
+                file.download_and_run(hack_list[selected_entry].download_url)
             elif event.key == pygame.K_ESCAPE:
-                running = False
+                return False, selected_entry, scroll_offset
 
-    # Clear the screen
-    screen.fill(BG_COLOR)
+    return True, selected_entry, scroll_offset
 
-    # Tile the background image
-    for x in range(0, WIDTH, bg_width):
-        for y in range(0, HEIGHT, bg_height):
-            screen.blit(BACKGROUND_IMAGE, (x, y))
 
-    # Draw header
-    screen.blit(LOGO_IMAGE, ((WIDTH - LOGO_IMAGE.get_width()) // 2, LOGO_PADDING_Y))
-    draw_text(
-        "Demo | Featured | Hack details",
-        FONT_DETAILS,
-        DETAIL_NORMAL,
-        (DESCRIPTION_OFFSET[0], LOGO_TOTAL - DESCRIPTION_OFFSET[1]),
-    )
+def run():
+    # Initialize screen
+    pygame.display.set_caption(LONG_NAME)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    # Draw footer
-    footer_y = HEIGHT - Y_BUTTON_IMAGE.get_width() - FOOTER_OFFSET[1]
-    screen.blit(Y_BUTTON_IMAGE, (FOOTER_OFFSET[0], footer_y))
+    # Get hack list
+    hack_list = crawler.get_hack_list()
 
-    slash_x = FOOTER_OFFSET[0] + Y_BUTTON_IMAGE.get_width()
-    draw_text("/", FONT_DETAILS, DETAIL_NORMAL, (slash_x, footer_y))
-
-    f_key_x = slash_x + FONT_DETAILS.size("/")[0]
-    screen.blit(F_KEY_IMAGE, (f_key_x, footer_y))
-
-    filter_text_x = f_key_x + F_KEY_IMAGE.get_width()
-    draw_text(" Apply filter", FONT_DETAILS, DETAIL_NORMAL, (filter_text_x, footer_y))
-
-    # Draw hack list
-    for i in range(
-        scroll_offset,
-        min(len(hack_list), scroll_offset + MENU_HEIGHT // MENU_ENTRY_HEIGHT),
-    ):
-        entry = hack_list[i]
-        is_selected = i == selected_entry
-        entry_y = LOGO_TOTAL + (i - scroll_offset) * MENU_ENTRY_HEIGHT
-
-        indent = SELECTION_INDENT if is_selected else 0
-
-        # name
-        draw_text(
-            entry.name,
-            FONT_TITLE,
-            ENTRY_NORMAL if not is_selected else ENTRY_SELECTED,
-            (TEXT_OFFSET + indent, entry_y + NAME_OFFSET),
+    selected_entry = 0
+    scroll_offset = 0
+    bg_pos = (0, 0)
+    running = True
+    while running:
+        running, selected_entry, scroll_offset = handle_events(
+            selected_entry, scroll_offset, hack_list
         )
+        bg_pos = draw(screen, selected_entry, scroll_offset, hack_list, bg_pos)
 
-        # author
-        name_text_width, name_text_height = FONT_TITLE.size(entry.name)
-        draw_text(
-            f"by {entry.author}",
-            FONT_DETAILS,
-            ENTRY_NORMAL if not is_selected else ENTRY_SELECTED,
-            (
-                name_text_width + TEXT_OFFSET + AUTHOR_OFFSET + indent,
-                entry_y + NAME_OFFSET + 8,
-            )
-            # todo: replace 8 with actual calculated value, so title and line form one line
-        )
-
-        # difficulty
-        draw_text(
-            entry.difficulty.value[0],
-            FONT_DETAILS,
-            DETAIL_NORMAL if not is_selected else DETAIL_SELECTED,
-            (TEXT_OFFSET + indent, entry_y + DIFFICULTY_OFFSET),
-        )
-
-        # details
-        draw_text(
-            (
-                f"{str(entry.rating) + '/5.0' if entry.rating else 'No ratings given'} | "
-                f"{entry.length} {'exit' if entry.length == 1 else 'exits'} | "
-                f"{entry.download_count} downloads | {entry.date.strftime('%c')} | {entry.size}"
-            ),
-            FONT_DETAILS,
-            DETAIL_NORMAL if not is_selected else DETAIL_SELECTED,
-            (TEXT_OFFSET + indent, entry_y + DETAIL_OFFSET),
-        )
-
-        draw_checkbox(entry.demo, entry_y, CHECKBOX_DEMO_OFFSET + indent)
-        draw_checkbox(entry.featured, entry_y, CHECKBOX_FEATURED_OFFSET + indent)
-
-        # Render red triangle next to the selected entry
-        if is_selected:
-            cursor_offset_y = (
-                entry_y + CURSOR_OFFSET[1] + (CURSOR_IMAGE.get_height() // 2)
-            )
-            screen.blit(CURSOR_IMAGE, (CURSOR_OFFSET[0] + indent, cursor_offset_y))
-
-        # Draw a white separator line between entries
-        separator_y = entry_y + MENU_ENTRY_HEIGHT
-        pygame.draw.line(
-            screen,
-            SEPARATOR_COLOR,
-            (SEPARATOR_OFFSET, separator_y),
-            (WIDTH - SEPARATOR_OFFSET, separator_y),
-            1,
-        )
-
-    # Update the display
-    pygame.display.flip()
-
-# Quit Pygame
-pygame.quit()
-sys.exit()
+    # Quit Pygame
+    pygame.quit()
+    sys.exit()

@@ -7,6 +7,15 @@
             "request": "launch",
             "module": "source.main",
             "args": ["data/smw.sfc"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Run in external terminal",
+            "type": "python",
+            "request": "launch",
+            "module": "source.main",
+            "args": ["data/smw.sfc"],
             "console": "externalTerminal",
             "justMyCode": true
         },
