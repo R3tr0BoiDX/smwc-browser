@@ -1,5 +1,6 @@
 import sys
 import logging
+from typing import List
 
 import pygame
 
@@ -9,7 +10,8 @@ from source.product_name import LONG_NAME
 
 pygame.init()
 
-WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+WIDTH, HEIGHT = 1280, 720
+# WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 
 # Colors
 BG_COLOR = (29, 30, 38)
@@ -278,31 +280,71 @@ def handle_events(selected_entry: int, scroll_offset: int, hack_list: list):
             return False, selected_entry, scroll_offset
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                selected_entry = max(0, selected_entry - 1)
-                if selected_entry < scroll_offset:
-                    scroll_offset = selected_entry
+                selected_entry, scroll_offset = event_selection_up(
+                    selected_entry, scroll_offset
+                )
             elif event.key == pygame.K_DOWN:
-                selected_entry = min(len(hack_list) - 1, selected_entry + 1)
-                if selected_entry >= scroll_offset + MENU_HEIGHT // MENU_ENTRY_HEIGHT:
-                    scroll_offset = min(
-                        len(hack_list) - MENU_HEIGHT // MENU_ENTRY_HEIGHT,
-                        selected_entry - MENU_HEIGHT // MENU_ENTRY_HEIGHT + 1,
-                    )
+                selected_entry, scroll_offset = event_selection_down(
+                    selected_entry, scroll_offset, len(hack_list)
+                )
             elif event.key == pygame.K_RETURN:
-                logger.info("Selected: %s", hack_list[selected_entry].name)
-                file.download_and_run(hack_list[selected_entry].download_url)
+                event_select_entry(hack_list, selected_entry)
             elif event.key == pygame.K_ESCAPE:
                 return False, selected_entry, scroll_offset
 
+        elif event.type == pygame.JOYHATMOTION:
+            if event.value[1] == 1:  # D-pad up
+                selected_entry, scroll_offset = event_selection_up(
+                    selected_entry, scroll_offset
+                )
+            elif event.value[1] == -1:  # D-pad down
+                selected_entry, scroll_offset = event_selection_down(
+                    selected_entry, scroll_offset, len(hack_list)
+                )
+
+        elif event.type == pygame.JOYBUTTONDOWN:
+            if event.button == 0:  # A button on the gamepad
+                event_select_entry(hack_list, selected_entry)
+            elif event.button == 7:  # Start button on the gamepad
+                return False, selected_entry, scroll_offset
+
     return True, selected_entry, scroll_offset
+
+
+def event_selection_up(selected_entry: int, scroll_offset: int) -> int:
+    selected_entry = max(0, selected_entry - 1)
+    if selected_entry < scroll_offset:
+        scroll_offset = selected_entry
+    return selected_entry, scroll_offset
+
+
+def event_selection_down(
+    selected_entry: int, scroll_offset: int, hack_list_len: int
+) -> int:
+    selected_entry = min(hack_list_len - 1, selected_entry + 1)
+    if selected_entry >= scroll_offset + MENU_HEIGHT // MENU_ENTRY_HEIGHT:
+        scroll_offset = min(
+            hack_list_len - MENU_HEIGHT // MENU_ENTRY_HEIGHT,
+            selected_entry - MENU_HEIGHT // MENU_ENTRY_HEIGHT + 1,
+        )
+    return selected_entry, scroll_offset
+
+
+def event_select_entry(hack_list: list, selected_entry: int):
+    logger.info("Selected: %s", hack_list[selected_entry].name)
+    file.download_and_run(hack_list[selected_entry].download_url)
 
 
 def run():
     # Initialize screen
     pygame.display.set_caption(LONG_NAME)
     pygame.display.set_icon(ICON_IMAGE)
-    # screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+    # Initialize gamepad
+    pygame.joystick.init()
+    _ = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 
     # Get hack list
     hack_list = crawler.get_hack_list()
