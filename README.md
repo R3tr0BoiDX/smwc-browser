@@ -1,6 +1,6 @@
 # SMW Central Browser
 
-README is WIP
+Project is WIP
 
 ## Example config.json
 
