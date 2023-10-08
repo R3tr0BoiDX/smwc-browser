@@ -42,4 +42,5 @@ def crc32(file: Path) -> str:
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    import source.gui.filter
