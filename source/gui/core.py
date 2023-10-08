@@ -16,9 +16,9 @@ class GUIElement(ABC):
 
     @abstractmethod
     def draw(self, pos: Tuple[int, int], selected: bool):
-        # todo: second pos, one pos for right sighted alginement of label
-        #  other pos for left sighted alighment of control element
-        # todo as well: provide describtion text to be rendered underneath 
+        # todo: second pos, one pos for right sighted alignment of label
+        #  other pos for left sighted alignment of control element
+        # todo as well: provide description text to be rendered underneath
         pass
 
     @abstractmethod
