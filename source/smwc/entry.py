@@ -1,6 +1,6 @@
-from enum import Enum
-from datetime import datetime
 from dataclasses import dataclass
+from datetime import datetime
+from enum import Enum
 
 
 class Difficulty(Enum):
@@ -40,3 +40,8 @@ def difficulty_string_to_enum(value: str) -> Difficulty:
             return difficulty_enum
 
     raise ValueError(f"Cannot convert '{value}' to a Difficulty type")
+
+
+def get_difficulty_names():
+    names = [difficulty.value[0] for difficulty in Difficulty]
+    return names[:-1]

@@ -2,7 +2,8 @@ from typing import Tuple
 
 import pygame
 
-from source.gui.core import BLACK, GUIElement
+import source.gui.assets as assets
+from source.gui.core import GUIElement
 
 SIZE = (16, 16)
 
@@ -11,46 +12,44 @@ class Checkbox(GUIElement):
     def __init__(
         self,
         screen: pygame.Surface,
-        pos: Tuple[int, int],
         label: str,
         font: pygame.font.Font,
     ):
         self.screen = screen
-        self.pos = pos
         self.label = label
         self.font = font
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.checked = False
 
-    def draw(
-        self,
-    ):
+    def draw(self, pos: Tuple[int, int], selected: bool):
+        color = assets.ENTRY_SELECTED if selected else assets.ENTRY_NORMAL
+
         # Render the label
-        label_renderer = self.font.render(self.label, True, BLACK)
-        self.screen.blit(label_renderer, self.pos)
+        label_renderer = self.font.render(self.label, True, color)
+        self.screen.blit(label_renderer, pos)
 
         # Draw the checkbox
         label_rect = label_renderer.get_rect()
         self.rect = pygame.Rect(
-            label_rect.right + self.pos[0],
-            label_rect.centery - (SIZE[1] // 2) + self.pos[1],
+            label_rect.right + pos[0],
+            label_rect.centery - (SIZE[1] // 2) + pos[1],
             SIZE[0],
             SIZE[1],
         )
-        pygame.draw.rect(self.screen, BLACK, self.rect, 2)
+        pygame.draw.rect(self.screen, color, self.rect, 2)
 
         # Draw checked
         if self.checked:
             pygame.draw.line(
                 self.screen,
-                BLACK,
+                color,
                 (self.rect.left, self.rect.centery),
                 (self.rect.centerx, self.rect.bottom),
                 2,
             )
             pygame.draw.line(
                 self.screen,
-                BLACK,
+                color,
                 (self.rect.centerx, self.rect.bottom),
                 (self.rect.right, self.rect.top),
                 2,

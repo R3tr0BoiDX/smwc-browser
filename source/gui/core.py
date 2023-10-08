@@ -3,25 +3,22 @@ from typing import Tuple
 
 import pygame
 
-# Colors
-WHITE = (255, 255, 255)
-GREY = (127, 127, 127)
-BLACK = (0, 0, 0)
-
 
 class GUIElement(ABC):
     @abstractmethod
     def __init__(
         self,
         screen: pygame.Surface,
-        pos: Tuple[int, int],
         label: str,
         font: pygame.font.Font,
     ):
         pass
 
     @abstractmethod
-    def draw(self):
+    def draw(self, pos: Tuple[int, int], selected: bool):
+        # todo: second pos, one pos for right sighted alginement of label
+        #  other pos for left sighted alighment of control element
+        # todo as well: provide describtion text to be rendered underneath 
         pass
 
     @abstractmethod
