@@ -1,10 +1,10 @@
-name: flake8
+name: deptry
 
 on: [push, pull_request]
 
 jobs:
     pylint:
-        name: flake8
+        name: deptry
         runs-on: ubuntu-latest
 
         steps:
