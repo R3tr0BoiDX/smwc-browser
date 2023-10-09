@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
     pylint:
+        name: Run pylint
         runs-on: ubuntu-latest
 
         steps:
