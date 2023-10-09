@@ -17,6 +17,7 @@ HEADER_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
 ENTRIES_OFFFSET = 16
 MENU_ENTRY_HEIGHT = 64
 
+# todo: button footer any apply
 
 def draw_header(screen: pygame.Surface):
     screen.blit(
