@@ -1,30 +1,17 @@
-from abc import ABC, abstractmethod
-from typing import Tuple
-
 import pygame
 
+import source.gui.filter as filter_screen
+from source.gui.constants import WIDTH, HEIGHT
 
-class GUIElement(ABC):
-    @abstractmethod
-    def __init__(
-        self,
-        screen: pygame.Surface,
-        label: str,
-        font: pygame.font.Font,
-    ):
-        pass
+# Initialize Pygame
+pygame.init()
 
-    @abstractmethod
-    def draw(self, pos: Tuple[int, int], selected: bool):
-        # todo: second pos, one pos for right sighted alignment of label
-        #  other pos for left sighted alignment of control element
-        # todo as well: provide description text to be rendered underneath
-        pass
 
-    @abstractmethod
-    def active(self, event: pygame.event.Event):
-        pass
+def run():
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    @abstractmethod
-    def get_value(self):
-        pass
+    running = True
+    while running:
+        running = filter_screen.run(screen)
+
+    pygame.quit()

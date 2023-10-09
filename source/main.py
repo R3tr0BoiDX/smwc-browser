@@ -5,7 +5,7 @@ import zlib
 from pathlib import Path
 
 from source import arguments, config
-from source.gui import browser
+from source.gui import core
 
 SMW_CRC32 = "B19ED489"
 
@@ -21,11 +21,23 @@ def main():
     logging.basicConfig(level=LOG_LEVEL)
     args = arguments.Arguments()
 
+    if args.get_sfc_path() is None:
+        logging.critical("No SFC path given!")
+        sys.exit(1)
+    
+    if args.get_sfc_path().exists() is False:
+        logging.critical("Given SFC does not exist!")
+        sys.exit(1)
+    
+    if args.get_sfc_path().is_file() is False:
+        logging.critical("Given SFC is not a file!")
+        sys.exit(1)
+
     if crc32(args.get_sfc_path()) != SMW_CRC32:
         logging.critical("Given SFC has incorrect CRC32. Expected: %s", SMW_CRC32)
         sys.exit(1)
 
-    browser.run()
+    core.run()
 
 
 def crc32(file: Path) -> str:
@@ -42,5 +54,4 @@ def crc32(file: Path) -> str:
 
 
 if __name__ == "__main__":
-    # main()
-    import source.gui.filter
+    main()

@@ -16,7 +16,7 @@ WIDTH, HEIGHT = 1280, 720
 
 # Font
 FONT_TITLE = pygame.font.Font(assets.FONT_TYPEFACE, assets.FONT_SIZE_TITLE)
-FONT_DETAILS = pygame.font.Font(assets.FONT_TYPEFACE, assets.FONT_SIZE_DETAILS)
+FONT_DETAILS = pygame.font.Font(assets.FONT_TYPEFACE, assets.FONT_SIZE_DETAIL)
 
 # Header
 LOGO_HEIGHT = 96
@@ -216,8 +216,6 @@ def draw(
     scroll_offset: int,
     hack_list: list,
 ):
-    # Clear the screen
-    screen.fill(assets.BG_COLOR)
 
     # Draw GUI
     draw_header(screen)
@@ -312,8 +310,8 @@ def run():
         running, selected_entry, scroll_offset = handle_events(
             selected_entry, scroll_offset, hack_list
         )
-        draw(screen, selected_entry, scroll_offset, hack_list)
         background.draw()
+        draw(screen, selected_entry, scroll_offset, hack_list)
 
     # Quit Pygame
     pygame.quit()

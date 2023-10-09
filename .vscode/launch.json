@@ -6,7 +6,7 @@
             "type": "python",
             "request": "launch",
             "module": "source.main",
-            "args": ["data/smw.sfc"],
+            "args": ["data/baserom.sfc"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -15,7 +15,7 @@
             "type": "python",
             "request": "launch",
             "module": "source.main",
-            "args": ["data/smw.sfc"],
+            "args": ["data/baserom.sfc"],
             "console": "externalTerminal",
             "justMyCode": true
         },

@@ -3,7 +3,8 @@ from typing import Tuple
 import pygame
 
 import source.gui.assets as assets
-from source.gui.core import GUIElement
+from source.gui.elements.gui_element import GUIElement
+from source.gui.constants import PADDING_BETWEEN_ELEMENTS
 
 
 class CarouselSelect(GUIElement):
@@ -11,35 +12,50 @@ class CarouselSelect(GUIElement):
         self,
         screen: pygame.Surface,
         label: str,
-        font: pygame.font.Font,
+        description: str,
         entries: list,
     ):
         self.screen = screen
         self.label = label
-        self.font = font
+        self.description = description
         self.entries = entries
         self.selected_index = 0
 
     def draw(
         self,
-        pos: Tuple[int, int],
+        anchor: Tuple[int, int],
         selected: bool,
     ):
         color = assets.ENTRY_SELECTED if selected else assets.ENTRY_NORMAL
+        color_detail = assets.DETAIL_SELECTED if selected else assets.DETAIL_NORMAL
 
         # Draw label
-        label_renderer = self.font.render(self.label, True, color)
-        self.screen.blit(label_renderer, pos)
+        label_renderer = assets.FONT_TITLE.render(self.label, True, color)
+        label_rect = label_renderer.get_rect()
+        label_rect.x = anchor[0] - (PADDING_BETWEEN_ELEMENTS // 2) - label_rect.right
+        label_rect.y = anchor[1]
+        self.screen.blit(label_renderer, label_rect)
+
+        # Draw description underneath label
+        description_renderer = assets.FONT_DETAIL.render(
+            self.description, True, color_detail
+        )
+        description_rect = description_renderer.get_rect()
+        description_rect.right = label_rect.right
+        description_rect.y = label_rect.bottom
+        self.screen.blit(description_renderer, description_rect)
 
         # Draw selected item
         label_rect = label_renderer.get_rect()
 
-        selected_entry_renderer = self.font.render(
+        selected_entry_renderer = assets.FONT_TITLE.render(
             self.entries[self.selected_index], True, color
         )
         text_rect = pygame.Rect(
-            label_rect.right + pos[0],
-            label_rect.centery - (selected_entry_renderer.get_height() // 2) + pos[1],
+            anchor[0] + (PADDING_BETWEEN_ELEMENTS // 2),
+            label_rect.centery
+            - (selected_entry_renderer.get_height() // 2)
+            + anchor[1],
             selected_entry_renderer.get_width(),
             selected_entry_renderer.get_height(),
         )
