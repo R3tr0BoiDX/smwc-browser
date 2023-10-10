@@ -1,6 +1,6 @@
 import pygame
 
-from source.gui.assets import BG_COLOR
+from source.gui.assets import COLOR_BACKGROUND
 
 SCROLL_SPEED_X = 1
 SCROLL_SPEED_Y = 1
@@ -17,7 +17,7 @@ class BackgroundDrawer:
 
     # Function to draw and scroll the background
     def draw(self):
-        self.screen.fill(BG_COLOR)
+        self.screen.fill(COLOR_BACKGROUND)
 
         x, y = self.last_pos
         screen_width, screen_height = self.screen.get_size()

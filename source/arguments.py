@@ -22,7 +22,7 @@ class Arguments:
 
     def init_singleton(self):
         """Initialize singleton."""
-        # pylint: disable=W0201
+        # pylint: disable=attribute-defined-outside-init
         self.args = self.parse_args()
 
     def parse_args(self) -> dict:

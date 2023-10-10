@@ -28,11 +28,11 @@ class Textfield(GUIElement):
         self.cursor_timer = 0
 
     def draw(self, anchor: Tuple[int, int], selected: bool):
-        color = assets.ENTRY_SELECTED if selected else assets.ENTRY_NORMAL
-        color_detail = assets.DETAIL_SELECTED if selected else assets.DETAIL_NORMAL
+        color = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
+        color_detail = assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
 
         # Draw label
-        label_renderer = assets.FONT_TITLE.render(self.label, True, color)
+        label_renderer = assets.FONT_MAJOR.render(self.label, True, color)
         label_rect = label_renderer.get_rect(
             topleft=(
                 anchor[0]
@@ -44,7 +44,7 @@ class Textfield(GUIElement):
         self.screen.blit(label_renderer, label_rect)
 
         # Draw description underneath label
-        description_renderer = assets.FONT_DETAIL.render(
+        description_renderer = assets.FONT_MINOR.render(
             self.description, True, color_detail
         )
         description_rect = description_renderer.get_rect(
@@ -64,13 +64,13 @@ class Textfield(GUIElement):
 
         # Calculate the maximum number of characters that can fit in the textbox
         if self.text != "":
-            char_size = math.ceil(assets.FONT_TITLE.size(self.text)[0] / len(self.text))
+            char_size = math.ceil(assets.FONT_MAJOR.size(self.text)[0] / len(self.text))
             max_chars = (box_rect.width - OFFSET_LEFT) // char_size
         else:
             max_chars = 0
 
         # Draw the text in the textbox, ensuring it doesn't exceed the maximum length
-        input_text = assets.FONT_TITLE.render(self.text[-max_chars:], True, color)
+        input_text = assets.FONT_MAJOR.render(self.text[-max_chars:], True, color)
         input_rect = input_text.get_rect(
             topleft=(
                 box_rect.x + OFFSET_LEFT,

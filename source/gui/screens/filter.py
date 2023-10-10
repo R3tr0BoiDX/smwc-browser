@@ -1,26 +1,18 @@
 import pygame
 
-import source.gui.assets as assets
-from source.gui.elements import BackgroundDrawer, CarouselSelect, Checkbox, Textfield
+from source.gui import assets
+from source.gui.constants import *  # pylint: disable=W0401,W0614  # noqa: F403
+from source.gui.elements import (BackgroundDrawer, CarouselSelect, Checkbox,
+                                 Textfield)
 from source.gui.elements.gui_element import GUIElement
-from source.smwc.entry import get_difficulty_names
-from source.product_name import LONG_NAME
 from source.gui.helper import draw_footer_button
-
+from source.product_name import LONG_NAME
+from source.smwc.entry import get_difficulty_names
 
 WINDOW_TITLE = LONG_NAME + ": Filter"
 
-# Header
-LOGO_HEIGHT = 96
-LOGO_PADDING_Y = 32
-HEADER_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
-
 # Menu
 ENTRIES_PADDING = 8
-
-# Footer
-FOOTER_OFFSET = (32, 48)
-FOOTER_BUTTONS_PADDING = 32
 
 
 def draw_header(screen: pygame.Surface):
@@ -36,19 +28,20 @@ def draw_footer(screen: pygame.Surface, space: bool):
         " Back",
         assets.BUTTON_A_IMAGE,
         assets.KEY_ESC_IMAGE,
-        assets.FONT_DETAIL,
+        assets.FONT_MINOR,
         FOOTER_OFFSET,
-        assets.DETAIL_NORMAL,
+        assets.COLOR_MINOR_NORMAL,
     )
 
+    # todo: make y dependent on previous rect.top
     apply_rect = draw_footer_button(
         screen,
         " Apply filter",
         assets.BUTTON_Y_IMAGE,
         assets.KEY_RETURN_IMAGE,
-        assets.FONT_DETAIL,
+        assets.FONT_MINOR,
         (back_rect.right + FOOTER_BUTTONS_PADDING, FOOTER_OFFSET[1]),
-        assets.DETAIL_NORMAL,
+        assets.COLOR_MINOR_NORMAL,
     )
 
     clear_react = draw_footer_button(
@@ -56,9 +49,9 @@ def draw_footer(screen: pygame.Surface, space: bool):
         " Clear filter",
         assets.BUTTON_X_IMAGE,
         assets.KEY_BACKSPACE_IMAGE,
-        assets.FONT_DETAIL,
+        assets.FONT_MINOR,
         (apply_rect.right + FOOTER_BUTTONS_PADDING, FOOTER_OFFSET[1]),
-        assets.DETAIL_NORMAL,
+        assets.COLOR_MINOR_NORMAL,
     )
 
     if space:
@@ -67,9 +60,9 @@ def draw_footer(screen: pygame.Surface, space: bool):
             " Toggle",
             assets.BUTTON_B_IMAGE,
             assets.KEY_SPACE_IMAGE,
-            assets.FONT_DETAIL,
+            assets.FONT_MINOR,
             (clear_react.right + FOOTER_BUTTONS_PADDING, FOOTER_OFFSET[1]),
-            assets.DETAIL_NORMAL,
+            assets.COLOR_MINOR_NORMAL,
         )
 
 
@@ -95,7 +88,6 @@ def run(screen: pygame.Surface) -> bool:
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
                 return False
 
             if event.type == pygame.KEYDOWN:

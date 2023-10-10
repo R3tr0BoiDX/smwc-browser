@@ -8,6 +8,7 @@ BUTTON_A_IMAGE = scale_image(pygame.image.load("media/images/button_a.png"), 3)
 BUTTON_B_IMAGE = scale_image(pygame.image.load("media/images/button_b.png"), 3)
 BUTTON_X_IMAGE = scale_image(pygame.image.load("media/images/button_x.png"), 3)
 BUTTON_Y_IMAGE = scale_image(pygame.image.load("media/images/button_y.png"), 3)
+BUTTON_START_IMAGE = scale_image(pygame.image.load("media/images/button_start.png"), 3)
 KEY_BACKSPACE_IMAGE = scale_image(pygame.image.load("media/images/key_backspace.png"), 3)
 KEY_ESC_IMAGE = scale_image(pygame.image.load("media/images/key_esc.png"), 3)
 KEY_F_IMAGE = scale_image(pygame.image.load("media/images/key_f.png"), 3)
@@ -24,18 +25,17 @@ LOGO_IMAGE = pygame.image.load("media/images/logo.png")
 ICON_IMAGE = pygame.image.load("media/images/icon.png")
 
 # Colors
-BG_COLOR = (29, 30, 38)
-ENTRY_NORMAL = (221, 221, 221)
-ENTRY_SELECTED = (255, 207, 41)
-DETAIL_NORMAL = (105, 118, 136)
-DETAIL_SELECTED = (143, 183, 239)
-SEPARATOR_COLOR = (62, 62, 69)
-ARROW_COLOR = (214, 71, 24)
+COLOR_BACKGROUND = (29, 30, 38)
+COLOR_MAJOR_NORMAL = (221, 221, 221)
+COLOR_MAJOR_SELECTED = (255, 207, 41)
+COLOR_MINOR_NORMAL = (105, 118, 136)
+COLOR_MINOR_SELECTED = (143, 183, 239)
+COLOR_SEPARATOR = (62, 62, 69)
 
 # Font
 pygame.font.init()
 FONT_TYPEFACE = "media/fonts/retro_gaming.ttf"
-FONT_SIZE_TITLE = 24
-FONT_SIZE_DETAIL = 16
-FONT_TITLE = pygame.font.Font(FONT_TYPEFACE, FONT_SIZE_TITLE)
-FONT_DETAIL = pygame.font.Font(FONT_TYPEFACE, FONT_SIZE_DETAIL)
+FONT_SIZE_MAJOR = 24
+FONT_SIZE_MINOR = 16
+FONT_MAJOR = pygame.font.Font(FONT_TYPEFACE, FONT_SIZE_MAJOR)
+FONT_MINOR = pygame.font.Font(FONT_TYPEFACE, FONT_SIZE_MINOR)

@@ -23,7 +23,7 @@ class Config:
 
     def init_singleton(self):
         """Initialize singleton."""
-        # pylint: disable=W0201
+        # pylint: disable=attribute-defined-outside-init
         self.config = self.read_json(Path(CONFIG_PATH))
 
     def read_json(self, config_file: Path) -> dict:

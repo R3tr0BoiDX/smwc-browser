@@ -23,11 +23,11 @@ class Checkbox(GUIElement):
         self.checked = False
 
     def draw(self, anchor: Tuple[int, int], selected: bool) -> pygame.Rect:
-        color_title = assets.ENTRY_SELECTED if selected else assets.ENTRY_NORMAL
-        color_detail = assets.DETAIL_SELECTED if selected else assets.DETAIL_NORMAL
+        color_title = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
+        color_detail = assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
 
         # Draw label
-        label_renderer = assets.FONT_TITLE.render(self.label, True, color_title)
+        label_renderer = assets.FONT_MAJOR.render(self.label, True, color_title)
         label_rect = label_renderer.get_rect(
             topleft=(
                 anchor[0]
@@ -39,7 +39,7 @@ class Checkbox(GUIElement):
         self.screen.blit(label_renderer, label_rect)
 
         # Draw description underneath label
-        description_renderer = assets.FONT_DETAIL.render(
+        description_renderer = assets.FONT_MINOR.render(
             self.description, True, color_detail
         )
         description_rect = description_renderer.get_rect(

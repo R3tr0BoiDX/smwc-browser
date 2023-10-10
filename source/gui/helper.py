@@ -33,8 +33,7 @@ def draw_footer_button(
     pos: Tuple[int, int],
     color: Tuple[int, int, int],
 ) -> pygame.Rect:
-    footer_y = screen.get_height() - button_image.get_width() - pos[1]
-    button_rect = draw_image(screen, button_image, (pos[0], footer_y))
+    button_rect = draw_image(screen, button_image, pos)
 
     slash_rendered = font.render(text, True, color).get_rect()
     slash_rect = draw_text(

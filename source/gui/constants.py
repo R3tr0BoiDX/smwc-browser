@@ -1,7 +1,13 @@
-# import pygame
-
 # Screen dimensions
-# WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 WIDTH, HEIGHT = 1280, 720
 
 PADDING_BETWEEN_ELEMENTS = 24
+
+# Header
+LOGO_HEIGHT = 96
+LOGO_PADDING_Y = 32
+HEADER_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
+
+# Footer
+FOOTER_OFFSET = (24, 24)
+FOOTER_BUTTONS_PADDING = 32

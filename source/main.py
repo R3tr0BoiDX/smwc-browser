@@ -4,7 +4,7 @@ import sys
 import zlib
 from pathlib import Path
 
-from source import arguments, config
+from source import arguments, config, logger
 from source.gui import core
 
 SMW_CRC32 = "B19ED489"
@@ -14,6 +14,7 @@ LOG_LEVEL = logging.DEBUG
 logging.basicConfig(level=LOG_LEVEL)
 arguments.Arguments()  # init arguments
 config.Config()  # init config
+logger.LoggerManager()  # init logger
 
 
 def main():
@@ -24,11 +25,11 @@ def main():
     if args.get_sfc_path() is None:
         logging.critical("No SFC path given!")
         sys.exit(1)
-    
+
     if args.get_sfc_path().exists() is False:
         logging.critical("Given SFC does not exist!")
         sys.exit(1)
-    
+
     if args.get_sfc_path().is_file() is False:
         logging.critical("Given SFC is not a file!")
         sys.exit(1)
@@ -38,6 +39,7 @@ def main():
         sys.exit(1)
 
     core.run()
+    sys.exit()
 
 
 def crc32(file: Path) -> str:

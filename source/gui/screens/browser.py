@@ -1,33 +1,24 @@
-import sys
 import logging
+from typing import Tuple
 
 import pygame
 
-from source.smwc import crawler
-from source import file
-from source.product_name import LONG_NAME
-from source.gui.elements import BackgroundDrawer
 import source.gui.assets as assets
-from source.gui.helper import draw_text
+from source import file
+from source.logger import LoggerManager
+from source.gui.constants import *  # pylint: disable=W0401,W0614  # noqa: F403
+from source.gui.elements import BackgroundDrawer
+from source.gui.helper import draw_text, draw_footer_button
+from source.product_name import LONG_NAME
+from source.smwc import crawler
 
-pygame.init()
-
-WIDTH, HEIGHT = 1280, 720
-# WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
-
-# Font
-FONT_TITLE = pygame.font.Font(assets.FONT_TYPEFACE, assets.FONT_SIZE_TITLE)
-FONT_DETAILS = pygame.font.Font(assets.FONT_TYPEFACE, assets.FONT_SIZE_DETAIL)
+WINDOW_TITLE = LONG_NAME
 
 # Header
-LOGO_HEIGHT = 96
-LOGO_PADDING_Y = 16
-HEADER_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
 DESCRIPTION_OFFSET = (16, 24)
 
 # Footer
-FOOTER_HEIGHT = 48
-FOOTER_OFFSET = (24, 56)
+FOOTER_HEIGHT = 64
 
 # Separator
 SEPARATOR_OFFSET = 16  # x
@@ -52,7 +43,7 @@ AUTHOR_OFFSET = 8  # x
 DIFFICULTY_OFFSET = NAME_OFFSET + 32  # y
 DETAIL_OFFSET = DIFFICULTY_OFFSET + 24  # y
 
-logger = logging.getLogger(__name__)
+# todo: arg for run after patched
 
 
 def draw_checkbox(
@@ -63,7 +54,6 @@ def draw_checkbox(
     screen.blit(image, (offset_x, offset_y))
 
 
-# Main loop
 def draw_header(screen: pygame.Surface):
     screen.blit(
         assets.LOGO_IMAGE,
@@ -72,34 +62,60 @@ def draw_header(screen: pygame.Surface):
     draw_text(
         screen,
         "Demo | Featured | Hack details",
-        FONT_DETAILS,
-        assets.DETAIL_NORMAL,
+        assets.FONT_MINOR,
+        assets.COLOR_MINOR_NORMAL,
         (DESCRIPTION_OFFSET[0], HEADER_TOTAL - DESCRIPTION_OFFSET[1]),
     )
 
 
 def draw_footer(screen: pygame.Surface):
-    # todo: idea: create logger, that sets the bottom text in footer
-
-    footer_y = HEIGHT - assets.BUTTON_Y_IMAGE.get_width() - FOOTER_OFFSET[1]
-    screen.blit(assets.BUTTON_Y_IMAGE, (FOOTER_OFFSET[0], footer_y))
-
-    slash_x = FOOTER_OFFSET[0] + assets.BUTTON_Y_IMAGE.get_width()
-    draw_text(
-        screen, "/", FONT_DETAILS, assets.DETAIL_NORMAL, (slash_x, footer_y)
+    footer_y = (
+        screen.get_height() - assets.BUTTON_B_IMAGE.get_width() - FOOTER_OFFSET[1]
     )
-
-    f_key_x = slash_x + FONT_DETAILS.size("/")[0]
-    screen.blit(assets.KEY_F_IMAGE, (f_key_x, footer_y))
-
-    filter_text_x = f_key_x + assets.KEY_F_IMAGE.get_width()
-    draw_text(
+    apply_rect = draw_footer_button(
         screen,
-        ": Apply filter",
-        FONT_DETAILS,
-        assets.DETAIL_NORMAL,
-        (filter_text_x, footer_y),
+        " Download and apply",
+        assets.BUTTON_B_IMAGE,
+        assets.KEY_RETURN_IMAGE,
+        assets.FONT_MINOR,
+        (FOOTER_OFFSET[0], footer_y),
+        assets.COLOR_MINOR_NORMAL,
     )
+
+    # todo: make y dependent on previous rect.top
+    footer_y = (
+        screen.get_height() - assets.BUTTON_Y_IMAGE.get_width() - FOOTER_OFFSET[1]
+    )
+    filter_rect = draw_footer_button(
+        screen,
+        " Search with filter",
+        assets.BUTTON_Y_IMAGE,
+        assets.KEY_F_IMAGE,
+        assets.FONT_MINOR,
+        (apply_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
+        assets.COLOR_MINOR_NORMAL,
+    )
+
+    footer_y = (
+        screen.get_height() - assets.BUTTON_START_IMAGE.get_width() - FOOTER_OFFSET[1]
+    )
+    exit_rect = draw_footer_button(
+        screen,
+        " Exit",
+        assets.BUTTON_START_IMAGE,
+        assets.KEY_ESC_IMAGE,
+        assets.FONT_MINOR,
+        (filter_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
+        assets.COLOR_MINOR_NORMAL,
+    )
+ 
+    # todo:
+    # footer_y = screen.get_height() - assets.FONT_MINOR.get_height() - FOOTER_OFFSET[1]
+    # screen_logger.draw(
+    #     screen,
+    #     assets.FONT_MINOR,
+    #     (exit_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
+    # )
 
 
 def draw_hack_list(
@@ -118,18 +134,22 @@ def draw_hack_list(
         draw_text(
             screen,
             entry.name,
-            FONT_TITLE,
-            assets.ENTRY_NORMAL if not is_selected else assets.ENTRY_SELECTED,
+            assets.FONT_MAJOR,
+            assets.COLOR_MAJOR_NORMAL
+            if not is_selected
+            else assets.COLOR_MAJOR_SELECTED,
             (TEXT_OFFSET + indent, entry_y + NAME_OFFSET),
         )
 
         # author
-        name_text_width, _ = FONT_TITLE.size(entry.name)
+        name_text_width, _ = assets.FONT_MAJOR.size(entry.name)
         draw_text(
             screen,
             f"by {entry.author}",
-            FONT_DETAILS,
-            assets.ENTRY_NORMAL if not is_selected else assets.ENTRY_SELECTED,
+            assets.FONT_MINOR,
+            assets.COLOR_MAJOR_NORMAL
+            if not is_selected
+            else assets.COLOR_MAJOR_SELECTED,
             (
                 name_text_width + TEXT_OFFSET + AUTHOR_OFFSET + indent,
                 entry_y + NAME_OFFSET + 8,
@@ -141,8 +161,10 @@ def draw_hack_list(
         draw_text(
             screen,
             entry.difficulty.value[0],
-            FONT_DETAILS,
-            assets.DETAIL_NORMAL if not is_selected else assets.DETAIL_SELECTED,
+            assets.FONT_MINOR,
+            assets.COLOR_MINOR_NORMAL
+            if not is_selected
+            else assets.COLOR_MINOR_SELECTED,
             (TEXT_OFFSET + indent, entry_y + DIFFICULTY_OFFSET),
         )
 
@@ -154,8 +176,10 @@ def draw_hack_list(
                 f"{entry.length} {'exit' if entry.length == 1 else 'exits'} | "
                 f"{entry.download_count} downloads | {entry.date.strftime('%c')} | {entry.size}"
             ),
-            FONT_DETAILS,
-            assets.DETAIL_NORMAL if not is_selected else assets.DETAIL_SELECTED,
+            assets.FONT_MINOR,
+            assets.COLOR_MINOR_NORMAL
+            if not is_selected
+            else assets.COLOR_MINOR_SELECTED,
             (TEXT_OFFSET + indent, entry_y + DETAIL_OFFSET),
         )
 
@@ -173,15 +197,17 @@ def draw_hack_list(
 
 
 def draw_cursor(screen: pygame.Surface, entry_y: int, indent: int):
-    cursor_offset_y = entry_y + CURSOR_OFFSET[1] + (CURSOR_IMAGE.get_height() // 2)
-    screen.blit(CURSOR_IMAGE, (CURSOR_OFFSET[0] + indent, cursor_offset_y))
+    cursor_offset_y = (
+        entry_y + CURSOR_OFFSET[1] + (assets.CURSOR_IMAGE.get_height() // 2)
+    )
+    screen.blit(assets.CURSOR_IMAGE, (CURSOR_OFFSET[0] + indent, cursor_offset_y))
 
 
 def draw_separator(screen: pygame.Surface, entry_y: int):
     separator_y = entry_y + MENU_ENTRY_HEIGHT
     pygame.draw.line(
         screen,
-        assets.SEPARATOR_COLOR,
+        assets.COLOR_SEPARATOR,
         (SEPARATOR_OFFSET, separator_y),
         (WIDTH - SEPARATOR_OFFSET, separator_y),
         1,
@@ -194,54 +220,16 @@ def draw(
     scroll_offset: int,
     hack_list: list,
 ):
-
     # Draw GUI
     draw_header(screen)
-    # draw_footer(screen)  # todo: enable again once filter screen is build
+    draw_footer(screen)
     draw_hack_list(screen, selected_entry, scroll_offset, hack_list)
 
     # Update the display
     pygame.display.flip()
 
 
-def handle_events(selected_entry: int, scroll_offset: int, hack_list: list):
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            return False, selected_entry, scroll_offset
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                selected_entry, scroll_offset = event_selection_up(
-                    selected_entry, scroll_offset
-                )
-            elif event.key == pygame.K_DOWN:
-                selected_entry, scroll_offset = event_selection_down(
-                    selected_entry, scroll_offset, len(hack_list)
-                )
-            elif event.key == pygame.K_RETURN:
-                event_select_entry(hack_list, selected_entry)
-            elif event.key == pygame.K_ESCAPE:
-                return False, selected_entry, scroll_offset
-
-        elif event.type == pygame.JOYHATMOTION:
-            if event.value[1] == 1:  # D-pad up
-                selected_entry, scroll_offset = event_selection_up(
-                    selected_entry, scroll_offset
-                )
-            elif event.value[1] == -1:  # D-pad down
-                selected_entry, scroll_offset = event_selection_down(
-                    selected_entry, scroll_offset, len(hack_list)
-                )
-
-        elif event.type == pygame.JOYBUTTONDOWN:
-            if event.button == 0:  # A button on the gamepad
-                event_select_entry(hack_list, selected_entry)
-            elif event.button == 7:  # Start button on the gamepad
-                return False, selected_entry, scroll_offset
-
-    return True, selected_entry, scroll_offset
-
-
-def event_selection_up(selected_entry: int, scroll_offset: int) -> int:
+def event_selection_up(selected_entry: int, scroll_offset: int) -> Tuple[int, int]:
     selected_entry = max(0, selected_entry - 1)
     if selected_entry < scroll_offset:
         scroll_offset = selected_entry
@@ -250,7 +238,7 @@ def event_selection_up(selected_entry: int, scroll_offset: int) -> int:
 
 def event_selection_down(
     selected_entry: int, scroll_offset: int, hack_list_len: int
-) -> int:
+) -> Tuple[int, int]:
     selected_entry = min(hack_list_len - 1, selected_entry + 1)
     if selected_entry >= scroll_offset + MENU_HEIGHT // MENU_ENTRY_HEIGHT:
         scroll_offset = min(
@@ -261,36 +249,54 @@ def event_selection_down(
 
 
 def event_select_entry(hack_list: list, selected_entry: int):
-    logger.info("Selected: %s", hack_list[selected_entry].name)
+    LoggerManager().logger().info("Run \"%s\"", hack_list[selected_entry].name)
     file.download_and_run(hack_list[selected_entry].download_url)
 
 
-def run():
-    # Initialize screen
+def run(screen: pygame.Surface):
+    # Init window
     pygame.display.set_caption(LONG_NAME)
-    pygame.display.set_icon(assets.ICON_IMAGE)
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-
     background = BackgroundDrawer(screen, assets.BACKGROUND_IMAGE)
 
-    # Initialize gamepad
-    pygame.joystick.init()
-    _ = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
-
-    # Get hack list
-    hack_list = crawler.get_hack_list()
-
+    # Main loop
+    hack_list = crawler.get_hack_list()  # todo: remove, its param
     selected_entry = 0
     scroll_offset = 0
     running = True
     while running:
-        running, selected_entry, scroll_offset = handle_events(
-            selected_entry, scroll_offset, hack_list
-        )
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    selected_entry, scroll_offset = event_selection_up(
+                        selected_entry, scroll_offset
+                    )
+                elif event.key == pygame.K_DOWN:
+                    selected_entry, scroll_offset = event_selection_down(
+                        selected_entry, scroll_offset, len(hack_list)
+                    )
+                elif event.key == pygame.K_RETURN:
+                    event_select_entry(hack_list, selected_entry)
+                elif event.key == pygame.K_ESCAPE:
+                    return False
+
+            elif event.type == pygame.JOYHATMOTION:
+                if event.value[1] == 1:  # D-pad up
+                    selected_entry, scroll_offset = event_selection_up(
+                        selected_entry, scroll_offset
+                    )
+                elif event.value[1] == -1:  # D-pad down
+                    selected_entry, scroll_offset = event_selection_down(
+                        selected_entry, scroll_offset, len(hack_list)
+                    )
+
+            elif event.type == pygame.JOYBUTTONDOWN:
+                if event.button == 0:  # A button on the gamepad
+                    event_select_entry(hack_list, selected_entry)
+                elif event.button == 7:  # Start button on the gamepad
+                    return False
+
         background.draw()
         draw(screen, selected_entry, scroll_offset, hack_list)
-
-    # Quit Pygame
-    pygame.quit()
-    sys.exit()
