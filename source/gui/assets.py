@@ -1,16 +1,27 @@
 import pygame
 
-# Images
-CHECKBOX_OFF_IMAGE = pygame.image.load("media/images/checkbox_off.png")
-CHECKBOX_ON_IMAGE = pygame.image.load("media/images/checkbox_on.png")
-CURSOR_IMAGE = pygame.image.load("media/images/cursor.png")
-LOGO_IMAGE = pygame.image.load("media/images/logo.png")
-Y_BUTTON_IMAGE = pygame.image.load("media/images/y_button.png")
-F_KEY_IMAGE = pygame.image.load("media/images/f_key.png")
-ICON_IMAGE = pygame.image.load("media/images/icon.png")
-BACKGROUND_IMAGE = pygame.image.load("media/images/background.png")
-CHECK_IMAGE = pygame.image.load("media/images/check.png")
+from source.gui.helper import scale_image
 
+# Images
+# x3
+BUTTON_A_IMAGE = scale_image(pygame.image.load("media/images/button_a.png"), 3)
+BUTTON_B_IMAGE = scale_image(pygame.image.load("media/images/button_b.png"), 3)
+BUTTON_X_IMAGE = scale_image(pygame.image.load("media/images/button_x.png"), 3)
+BUTTON_Y_IMAGE = scale_image(pygame.image.load("media/images/button_y.png"), 3)
+KEY_BACKSPACE_IMAGE = scale_image(pygame.image.load("media/images/key_backspace.png"), 3)
+KEY_ESC_IMAGE = scale_image(pygame.image.load("media/images/key_esc.png"), 3)
+KEY_F_IMAGE = scale_image(pygame.image.load("media/images/key_f.png"), 3)
+KEY_RETURN_IMAGE = scale_image(pygame.image.load("media/images/key_return.png"), 3)
+KEY_SPACE_IMAGE = scale_image(pygame.image.load("media/images/key_space.png"), 3)
+# x2
+CHECKBOX_OFF_IMAGE = scale_image(pygame.image.load("media/images/checkbox_off.png"), 2)
+CHECKBOX_ON_IMAGE = scale_image(pygame.image.load("media/images/checkbox_on.png"), 2)
+CURSOR_IMAGE = scale_image(pygame.image.load("media/images/cursor.png"), 2)
+# x1
+CHECK_IMAGE = pygame.image.load("media/images/check.png")
+BACKGROUND_IMAGE = pygame.image.load("media/images/background.png")
+LOGO_IMAGE = pygame.image.load("media/images/logo.png")
+ICON_IMAGE = pygame.image.load("media/images/icon.png")
 
 # Colors
 BG_COLOR = (29, 30, 38)

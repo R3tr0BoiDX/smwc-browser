@@ -8,6 +8,7 @@ from source import file
 from source.product_name import LONG_NAME
 from source.gui.elements import BackgroundDrawer
 import source.gui.assets as assets
+from source.gui.helper import draw_text
 
 pygame.init()
 
@@ -33,7 +34,6 @@ SEPARATOR_OFFSET = 16  # x
 
 # Selection
 CURSOR_OFFSET = (SEPARATOR_OFFSET, 16)  # x, y
-CURSOR_SCALE_FACTOR = 2
 SELECTION_INDENT = 16
 
 # Menu
@@ -44,7 +44,6 @@ MENU_ENTRY_HEIGHT = 96  # px
 CHECKBOX_OFFSET = 16  # y
 CHECKBOX_DEMO_OFFSET = CURSOR_OFFSET[0] + 32  # x
 CHECKBOX_FEATURED_OFFSET = CHECKBOX_DEMO_OFFSET + 48  # x
-CHECK_BOX_SCALE_FACTOR = CURSOR_SCALE_FACTOR  # x
 
 # Text
 TEXT_OFFSET = CHECKBOX_FEATURED_OFFSET + 48  # x
@@ -56,33 +55,12 @@ DETAIL_OFFSET = DIFFICULTY_OFFSET + 24  # y
 logger = logging.getLogger(__name__)
 
 
-def scale_image(image: pygame.Surface, scale_factor: float) -> pygame.Surface:
-    scaled_width = image.get_width() * scale_factor
-    scaled_height = image.get_height() * scale_factor
-    return pygame.transform.scale(image, (scaled_width, scaled_height))
-
-
-def draw_text(
-    screen: pygame.Surface, text: str, font: pygame.font.Font, color: tuple, pos: tuple
-) -> None:
-    text_rendered = font.render(text, True, color)
-    text_rect = text_rendered.get_rect(topleft=pos)
-    screen.blit(text_rendered, text_rect)
-
-
 def draw_checkbox(
     screen: pygame.Surface, state: bool, entry_y_pos: int, offset_x: int
 ) -> None:
-    image = CHECKBOX_ON_IMAGE if state else CHECKBOX_OFF_IMAGE
+    image = assets.CHECKBOX_ON_IMAGE if state else assets.CHECKBOX_OFF_IMAGE
     offset_y = entry_y_pos + CHECKBOX_OFFSET
     screen.blit(image, (offset_x, offset_y))
-
-
-CHECKBOX_ON_IMAGE = scale_image(assets.CHECKBOX_ON_IMAGE, CHECK_BOX_SCALE_FACTOR)
-CHECKBOX_OFF_IMAGE = scale_image(assets.CHECKBOX_OFF_IMAGE, CHECK_BOX_SCALE_FACTOR)
-CURSOR_IMAGE = scale_image(assets.CURSOR_IMAGE, CURSOR_SCALE_FACTOR)
-Y_BUTTON_IMAGE = scale_image(assets.Y_BUTTON_IMAGE, 3)
-F_KEY_IMAGE = scale_image(assets.F_KEY_IMAGE, 3)
 
 
 # Main loop
@@ -103,18 +81,18 @@ def draw_header(screen: pygame.Surface):
 def draw_footer(screen: pygame.Surface):
     # todo: idea: create logger, that sets the bottom text in footer
 
-    footer_y = HEIGHT - Y_BUTTON_IMAGE.get_width() - FOOTER_OFFSET[1]
-    screen.blit(Y_BUTTON_IMAGE, (FOOTER_OFFSET[0], footer_y))
+    footer_y = HEIGHT - assets.BUTTON_Y_IMAGE.get_width() - FOOTER_OFFSET[1]
+    screen.blit(assets.BUTTON_Y_IMAGE, (FOOTER_OFFSET[0], footer_y))
 
-    slash_x = FOOTER_OFFSET[0] + Y_BUTTON_IMAGE.get_width()
+    slash_x = FOOTER_OFFSET[0] + assets.BUTTON_Y_IMAGE.get_width()
     draw_text(
         screen, "/", FONT_DETAILS, assets.DETAIL_NORMAL, (slash_x, footer_y)
     )
 
     f_key_x = slash_x + FONT_DETAILS.size("/")[0]
-    screen.blit(F_KEY_IMAGE, (f_key_x, footer_y))
+    screen.blit(assets.KEY_F_IMAGE, (f_key_x, footer_y))
 
-    filter_text_x = f_key_x + F_KEY_IMAGE.get_width()
+    filter_text_x = f_key_x + assets.KEY_F_IMAGE.get_width()
     draw_text(
         screen,
         ": Apply filter",

@@ -1,6 +1,6 @@
 import pygame
 
-import source.gui.filter as filter_screen
+import source.gui.scenes.filter as filter_screen
 from source.gui.constants import WIDTH, HEIGHT
 
 # Initialize Pygame

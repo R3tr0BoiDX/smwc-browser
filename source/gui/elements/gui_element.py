@@ -10,7 +10,7 @@ class GUIElement(ABC):
         pass
 
     @abstractmethod
-    def draw(self, anchor: Tuple[int, int], selected: bool):
+    def draw(self, anchor: Tuple[int, int], selected: bool) -> pygame.Rect:
         pass
 
     @abstractmethod
@@ -19,4 +19,8 @@ class GUIElement(ABC):
 
     @abstractmethod
     def get_value(self):
+        pass
+
+    @abstractmethod
+    def clear_value(self):
         pass

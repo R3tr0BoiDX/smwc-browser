@@ -22,37 +22,42 @@ class Checkbox(GUIElement):
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.checked = False
 
-    def draw(self, anchor: Tuple[int, int], selected: bool):
+    def draw(self, anchor: Tuple[int, int], selected: bool) -> pygame.Rect:
         color_title = assets.ENTRY_SELECTED if selected else assets.ENTRY_NORMAL
         color_detail = assets.DETAIL_SELECTED if selected else assets.DETAIL_NORMAL
 
         # Draw label
         label_renderer = assets.FONT_TITLE.render(self.label, True, color_title)
-        label_rect = label_renderer.get_rect()
-        label_rect.x = anchor[0] - (PADDING_BETWEEN_ELEMENTS // 2) - label_rect.right
-        label_rect.y = anchor[1]
+        label_rect = label_renderer.get_rect(
+            topleft=(
+                anchor[0]
+                - (PADDING_BETWEEN_ELEMENTS // 2)
+                - label_renderer.get_width(),
+                anchor[1],
+            )
+        )
         self.screen.blit(label_renderer, label_rect)
 
         # Draw description underneath label
         description_renderer = assets.FONT_DETAIL.render(
             self.description, True, color_detail
         )
-        description_rect = description_renderer.get_rect()
-        description_rect.right = label_rect.right
-        description_rect.y = label_rect.bottom
+        description_rect = description_renderer.get_rect(
+            topright=(label_rect.right, label_rect.bottom)
+        )
         self.screen.blit(description_renderer, description_rect)
 
-        # Draw checkbox
-        label_rect = label_renderer.get_rect()
+        # Draw the checkbox
+        label_rect_origin = label_renderer.get_rect()
         self.rect = pygame.Rect(
-            anchor[0] + (PADDING_BETWEEN_ELEMENTS // 2),
-            label_rect.centery - (SIZE[1] // 2) + anchor[1],
+            (PADDING_BETWEEN_ELEMENTS // 2) + anchor[0],
+            label_rect_origin.centery - (SIZE[1] // 2) + anchor[1],
             SIZE[0],
             SIZE[1],
         )
         pygame.draw.rect(self.screen, color_title, self.rect, 2)
 
-        # Draw checked
+        # Draw checked mark if checked
         if self.checked:
             image_size = assets.CHECK_IMAGE.get_rect()
             self.screen.blit(
@@ -63,6 +68,8 @@ class Checkbox(GUIElement):
                 ),
             )
 
+        return label_rect.unionall([description_rect, self.rect])
+
     def active(self, event: pygame.event.Event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Mouse input
@@ -70,9 +77,12 @@ class Checkbox(GUIElement):
                 self.checked = not self.checked
         elif event.type == pygame.KEYDOWN:
             # Keyboard input
-            if event.key in [pygame.K_RETURN, pygame.K_SPACE]:
+            if event.key == pygame.K_SPACE:
                 self.checked = not self.checked
         # todo: gamepad input
 
     def get_value(self) -> bool:
         return self.checked
+
+    def clear_value(self):
+        self.checked = False
