@@ -35,6 +35,7 @@ class Config:
         Returns:
             dict: The config as a dictionary.
         """
+        # todo: add check if present
         with open(config_file, mode="r", encoding="utf-8") as file:
             return json.load(file)
 

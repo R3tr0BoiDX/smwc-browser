@@ -37,5 +37,7 @@ pygame.font.init()
 FONT_TYPEFACE = "media/fonts/retro_gaming.ttf"
 FONT_SIZE_MAJOR = 24
 FONT_SIZE_MINOR = 16
+FONT_SIZE_LOG = 18
 FONT_MAJOR = pygame.font.Font(FONT_TYPEFACE, FONT_SIZE_MAJOR)
 FONT_MINOR = pygame.font.Font(FONT_TYPEFACE, FONT_SIZE_MINOR)
+FONT_LOG = pygame.font.Font(None, FONT_SIZE_LOG)

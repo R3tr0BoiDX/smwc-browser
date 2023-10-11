@@ -1,4 +1,3 @@
-import logging
 from typing import Tuple
 
 import pygame
@@ -108,14 +107,13 @@ def draw_footer(screen: pygame.Surface):
         (filter_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
         assets.COLOR_MINOR_NORMAL,
     )
- 
-    # todo:
-    # footer_y = screen.get_height() - assets.FONT_MINOR.get_height() - FOOTER_OFFSET[1]
-    # screen_logger.draw(
-    #     screen,
-    #     assets.FONT_MINOR,
-    #     (exit_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
-    # )
+
+    # todo: align on right side and draw first in footer OR calculate max length and cut off
+    footer_y = screen.get_height() - assets.FONT_LOG.get_height() - FOOTER_OFFSET[1]
+    LoggerManager().handler.screen_logger.draw(
+        screen,
+        (exit_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
+    )
 
 
 def draw_hack_list(
@@ -249,7 +247,8 @@ def event_selection_down(
 
 
 def event_select_entry(hack_list: list, selected_entry: int):
-    LoggerManager().logger().info("Run \"%s\"", hack_list[selected_entry].name)
+    LoggerManager().logger.info('Run "%s"', hack_list[selected_entry].name)
+    # todo: run in thread
     file.download_and_run(hack_list[selected_entry].download_url)
 
 

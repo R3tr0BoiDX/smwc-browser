@@ -1,6 +1,6 @@
 import logging
 
-# from source.gui.elements import ScreenLogger
+from source.gui.elements import ScreenLogHandler
 
 
 class LoggerManager:
@@ -15,11 +15,8 @@ class LoggerManager:
     def init_singleton(self):
         """Initialize singleton."""
         # pylint: disable=attribute-defined-outside-init
-        self.shared_logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger(__name__)
 
-        # todo: Add handler to log to display log on screen
-        # handler = ScreenLogHandler()
-        # LoggerManager().logger().addHandler(handler)
-
-    def logger(self) -> logging.Logger:
-        return self.shared_logger
+        # Add handler to log to display log on screen
+        self.handler = ScreenLogHandler()
+        self.logger.addHandler(self.handler)

@@ -39,10 +39,10 @@ def download_and_run(url: str):
 
         # check if the file is already in the library
         if file_path.is_file():
-            LoggerManager().logger().info("File '%s' already in library", file_name)
+            LoggerManager().logger.info("File '%s' already in library", file_name)
             run_patched_file(file_path)
         else:
-            LoggerManager().logger().info("File '%s' not in library, download and patching it", file_name)
+            LoggerManager().logger.info("File '%s' not in library, download and patching it", file_name)
 
             downloaded_file = download_file(url)
             extracted_path = unzip_file(downloaded_file)
@@ -55,9 +55,9 @@ def download_and_run(url: str):
                     apply_patch(patch_files[0], file_path)
                     run_patched_file(file_path)
                 except (CorruptFile, NotADirectoryError) as error:
-                    LoggerManager().logger().error(error)
+                    LoggerManager().logger.error(error)
     except requests.exceptions.HTTPError as error:
-        LoggerManager().logger().error(error)
+        LoggerManager().logger.error(error)
 
 
 def get_library_path_for_file(file_name: str) -> Path:
@@ -93,7 +93,7 @@ def download_file(file_url: str) -> Path:
         with open(file_path, mode="wb") as file:
             file.write(response.content)
 
-        LoggerManager().logger().info("File downloaded and saved as %s", file_path)
+        LoggerManager().logger.info("File downloaded and saved as %s", file_path)
         return file_path
 
     raise requests.exceptions.HTTPError(
@@ -119,7 +119,7 @@ def unzip_file(zip_path: Path) -> Path:
         # extract the zip in the same path as its stored in
         zip_ref.extractall(directory_path)
 
-    LoggerManager().logger().info("ZIP extracted to %s", directory_path)
+    LoggerManager().logger.info("ZIP extracted to %s", directory_path)
     return Path(directory_path)
 
 
@@ -140,7 +140,7 @@ def find_files_by_extensions(directory: Path, file_extensions: list) -> list:
             glob.glob(os.path.join(directory, "**", extension), recursive=True)
         )
 
-    LoggerManager().logger().info(
+    LoggerManager().logger.info(
         "Found %s files with extensions %s: %s",
         len(matching_files),
         file_extensions,
@@ -174,7 +174,7 @@ def apply_patch(patch_path: Path, dest_path: str) -> Path:
         dest_stream = open(dest_path, mode="wb")
         bps.apply_to_files(patch_stream, source_stream, dest_stream)
 
-    LoggerManager().logger().info(
+    LoggerManager().logger.info(
         "Patched '%s' to '%s', saved as '%s'", patch_path, source_path, dest_path
     )
 
@@ -186,11 +186,11 @@ def run_patched_file(file_path: Path):
     Args:
         file_path (Path): The path to the patched file.
     """
-    LoggerManager().logger().info("Trying to run %s", file_path)
+    LoggerManager().logger.info("Trying to run %s", file_path)
     try:
         subprocess.run(
             [config.Config().get_launch_program_path(), file_path], check=True
         )
-        LoggerManager().logger().info("Launch program exited")
+        LoggerManager().logger.info("Launch program exited")
     except subprocess.CalledProcessError as error:
-        LoggerManager().logger().error(error)
+        LoggerManager().logger.error(error)

@@ -1,28 +1,30 @@
 from collections import deque
 from typing import Tuple
+import logging
 
 import pygame
 
 from source.gui.helper import draw_text
-from source.gui.assets import COLOR_MINOR_NORMAL
+from source.gui.assets import COLOR_MINOR_NORMAL, FONT_LOG
 
-MAX_LENGTH = 3
+MAX_LENGTH = 5
 
-ENTRIES_PADDING = 4
+ENTRIES_PADDING = -2
 
 COLOR_WARN = (255, 207, 41)
 COLOR_ERROR = (214, 71, 24)
 COLOR_UNKNOWN = (255, 0, 255)
 
-# screen_logger = ScreenLogger()
 
+class ScreenLogHandler(logging.Handler):
+    def __init__(self) -> None:
+        super().__init__()
+        self.screen_logger = ScreenLogger()
 
-# todo: finish screen logger
-# class ScreenLogHandler(logging.Handler):
-#     def emit(self, record):
-#         log_level = record.levelname
-#         log_message = self.format(record)
-#         screen_logger.add_entry((log_message, log_level))
+    def emit(self, record):
+        log_level = record.levelname
+        log_message = self.format(record)
+        self.screen_logger.add_entry((log_message, log_level))
 
 
 class ScreenLogger:
@@ -35,16 +37,15 @@ class ScreenLogger:
     def draw(
         self,
         screen: pygame.Surface,
-        font: pygame.font.Font,
         pos: Tuple[int, int],
     ):
         msgs = list(self.deque)[::-1]  # slice to reverse
         text_y = pos[1]
         for msg in msgs:
             color = get_log_level_color(msg[1])
-            text_rect = draw_text(screen, msg[0], font, color, (pos[0], text_y))
+            text_rect = draw_text(screen, msg[0], FONT_LOG, color, (pos[0], text_y))
 
-            text_y -= text_rect.height - ENTRIES_PADDING
+            text_y -= text_rect.height + ENTRIES_PADDING
 
 
 def get_log_level_color(level: str) -> Tuple[int, int, int]:

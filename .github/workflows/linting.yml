@@ -16,7 +16,7 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
                   pip install pylint
-                  pylint --max-line-length 120 source/
+                  pylint --max-line-length=120 source/
     flake8:
         name: flake8
         runs-on: ubuntu-latest
@@ -30,7 +30,7 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
                   pip install flake8
-                  flake8 --max-line-length 120 source/
+                  flake8 --max-line-length=120 --ignore=F405 source/
     mypy:
         name: Mypy
         runs-on: ubuntu-latest
