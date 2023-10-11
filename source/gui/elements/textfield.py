@@ -1,4 +1,3 @@
-import math
 from typing import Tuple
 
 import pygame
@@ -6,6 +5,7 @@ import pygame
 import source.gui.assets as assets
 from source.gui.elements.gui_element import GUIElement
 from source.gui.constants import PADDING_BETWEEN_ELEMENTS
+from source.gui.helper import cut_string_to_width
 
 SIZE = (256, 32)
 OFFSET_LEFT = 8
@@ -63,14 +63,10 @@ class Textfield(GUIElement):
         pygame.draw.rect(self.screen, color, box_rect, 2)
 
         # Calculate the maximum number of characters that can fit in the textbox
-        if self.text != "":
-            char_size = math.ceil(assets.FONT_MAJOR.size(self.text)[0] / len(self.text))
-            max_chars = (box_rect.width - OFFSET_LEFT) // char_size
-        else:
-            max_chars = 0
+        text = cut_string_to_width(self.text, assets.FONT_MAJOR, box_rect.width - OFFSET_LEFT)
 
         # Draw the text in the textbox, ensuring it doesn't exceed the maximum length
-        input_text = assets.FONT_MAJOR.render(self.text[-max_chars:], True, color)
+        input_text = assets.FONT_MAJOR.render(text, True, color)
         input_rect = input_text.get_rect(
             topleft=(
                 box_rect.x + OFFSET_LEFT,

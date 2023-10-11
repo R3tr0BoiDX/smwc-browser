@@ -1,4 +1,5 @@
 from typing import Tuple
+import threading
 
 import pygame
 
@@ -10,6 +11,7 @@ from source.gui.elements import BackgroundDrawer
 from source.gui.helper import draw_text, draw_footer_button
 from source.product_name import LONG_NAME
 from source.smwc import crawler
+
 
 WINDOW_TITLE = LONG_NAME
 
@@ -69,7 +71,7 @@ def draw_header(screen: pygame.Surface):
 
 def draw_footer(screen: pygame.Surface):
     footer_y = (
-        screen.get_height() - assets.BUTTON_B_IMAGE.get_width() - FOOTER_OFFSET[1]
+        screen.get_height() - assets.BUTTON_B_IMAGE.get_height() - FOOTER_OFFSET[1]
     )
     apply_rect = draw_footer_button(
         screen,
@@ -81,10 +83,7 @@ def draw_footer(screen: pygame.Surface):
         assets.COLOR_MINOR_NORMAL,
     )
 
-    # todo: make y dependent on previous rect.top
-    footer_y = (
-        screen.get_height() - assets.BUTTON_Y_IMAGE.get_width() - FOOTER_OFFSET[1]
-    )
+    # todo: make y dependent on previous rect.top ... somehow
     filter_rect = draw_footer_button(
         screen,
         " Search with filter",
@@ -95,9 +94,6 @@ def draw_footer(screen: pygame.Surface):
         assets.COLOR_MINOR_NORMAL,
     )
 
-    footer_y = (
-        screen.get_height() - assets.BUTTON_START_IMAGE.get_width() - FOOTER_OFFSET[1]
-    )
     exit_rect = draw_footer_button(
         screen,
         " Exit",
@@ -108,11 +104,12 @@ def draw_footer(screen: pygame.Surface):
         assets.COLOR_MINOR_NORMAL,
     )
 
-    # todo: align on right side and draw first in footer OR calculate max length and cut off
+    # logger
     footer_y = screen.get_height() - assets.FONT_LOG.get_height() - FOOTER_OFFSET[1]
     LoggerManager().handler.screen_logger.draw(
         screen,
-        (exit_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
+        (screen.get_width() - FOOTER_OFFSET[0], footer_y),
+        screen.get_width() - (exit_rect.right + FOOTER_BUTTONS_PADDING),
     )
 
 
@@ -247,9 +244,10 @@ def event_selection_down(
 
 
 def event_select_entry(hack_list: list, selected_entry: int):
-    LoggerManager().logger.info('Run "%s"', hack_list[selected_entry].name)
-    # todo: run in thread
-    file.download_and_run(hack_list[selected_entry].download_url)
+    LoggerManager().logger.info('Selected "%s"', hack_list[selected_entry].name)
+    threading.Thread(
+        target=file.download_and_run, args=(hack_list[selected_entry].download_url,)
+    ).start()
 
 
 def run(screen: pygame.Surface):

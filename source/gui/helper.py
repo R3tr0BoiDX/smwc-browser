@@ -1,6 +1,23 @@
 from typing import Tuple
+import math
 
 import pygame
+
+
+def cut_string_to_width(
+    text: str, font: pygame.font.Font, width: int, cut_right: bool = False
+) -> int:
+    max_chars = 0
+    if text != "":
+        char_size = math.ceil(font.size(text)[0] / len(text))
+        max_chars = width // char_size
+
+    if len(text) > max_chars:
+        max_chars -= 3
+        if cut_right:
+            return text[:max_chars] + "..."
+        return "..." + text[-max_chars:]
+    return text
 
 
 def draw_text(

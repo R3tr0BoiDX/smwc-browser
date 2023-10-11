@@ -23,24 +23,27 @@ def draw_header(screen: pygame.Surface):
 
 
 def draw_footer(screen: pygame.Surface, space: bool):
+    footer_y = (
+        screen.get_height() - assets.BUTTON_B_IMAGE.get_height() - FOOTER_OFFSET[1]
+    )
     back_rect = draw_footer_button(
         screen,
         " Back",
         assets.BUTTON_A_IMAGE,
         assets.KEY_ESC_IMAGE,
         assets.FONT_MINOR,
-        FOOTER_OFFSET,
+        (FOOTER_OFFSET[0], footer_y),
         assets.COLOR_MINOR_NORMAL,
     )
 
-    # todo: make y dependent on previous rect.top
+    # todo: make y dependent on previous rect.top ... somehow
     apply_rect = draw_footer_button(
         screen,
         " Apply filter",
         assets.BUTTON_Y_IMAGE,
         assets.KEY_RETURN_IMAGE,
         assets.FONT_MINOR,
-        (back_rect.right + FOOTER_BUTTONS_PADDING, FOOTER_OFFSET[1]),
+        (back_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
         assets.COLOR_MINOR_NORMAL,
     )
 
@@ -50,7 +53,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
         assets.BUTTON_X_IMAGE,
         assets.KEY_BACKSPACE_IMAGE,
         assets.FONT_MINOR,
-        (apply_rect.right + FOOTER_BUTTONS_PADDING, FOOTER_OFFSET[1]),
+        (apply_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
         assets.COLOR_MINOR_NORMAL,
     )
 
@@ -61,7 +64,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
             assets.BUTTON_B_IMAGE,
             assets.KEY_SPACE_IMAGE,
             assets.FONT_MINOR,
-            (clear_react.right + FOOTER_BUTTONS_PADDING, FOOTER_OFFSET[1]),
+            (clear_react.right + FOOTER_BUTTONS_PADDING, footer_y),
             assets.COLOR_MINOR_NORMAL,
         )
 

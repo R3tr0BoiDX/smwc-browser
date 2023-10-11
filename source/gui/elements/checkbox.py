@@ -23,8 +23,12 @@ class Checkbox(GUIElement):
         self.checked = False
 
     def draw(self, anchor: Tuple[int, int], selected: bool) -> pygame.Rect:
-        color_title = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
-        color_detail = assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+        color_title = (
+            assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
+        )
+        color_detail = (
+            assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+        )
 
         # Draw label
         label_renderer = assets.FONT_MAJOR.render(self.label, True, color_title)

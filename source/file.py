@@ -42,7 +42,9 @@ def download_and_run(url: str):
             LoggerManager().logger.info("File '%s' already in library", file_name)
             run_patched_file(file_path)
         else:
-            LoggerManager().logger.info("File '%s' not in library, download and patching it", file_name)
+            LoggerManager().logger.info(
+                "File '%s' not in library, download and patching it", file_name
+            )
 
             downloaded_file = download_file(url)
             extracted_path = unzip_file(downloaded_file)
@@ -186,11 +188,10 @@ def run_patched_file(file_path: Path):
     Args:
         file_path (Path): The path to the patched file.
     """
-    LoggerManager().logger.info("Trying to run %s", file_path)
+    program = config.Config().get_launch_program_path()
+    LoggerManager().logger.info("Trying to run ' %s %s'", program, file_path)
     try:
-        subprocess.run(
-            [config.Config().get_launch_program_path(), file_path], check=True
-        )
-        LoggerManager().logger.info("Launch program exited")
+        subprocess.run([program, file_path], check=True)
+        LoggerManager().logger.info("Launched program exited")
     except subprocess.CalledProcessError as error:
         LoggerManager().logger.error(error)

@@ -4,12 +4,12 @@ import logging
 
 import pygame
 
-from source.gui.helper import draw_text
+from source.gui.helper import draw_text, cut_string_to_width
 from source.gui.assets import COLOR_MINOR_NORMAL, FONT_LOG
 
 MAX_LENGTH = 5
 
-ENTRIES_PADDING = -2
+ENTRIES_PADDING = 0
 
 COLOR_WARN = (255, 207, 41)
 COLOR_ERROR = (214, 71, 24)
@@ -34,17 +34,28 @@ class ScreenLogger:
     def add_entry(self, msg: Tuple[str, str]):
         self.deque.append(msg)
 
-    def draw(
-        self,
-        screen: pygame.Surface,
-        pos: Tuple[int, int],
-    ):
+    def draw(self, screen: pygame.Surface, pos: Tuple[int, int], width: int) -> None:
         msgs = list(self.deque)[::-1]  # slice to reverse
         text_y = pos[1]
         for msg in msgs:
             color = get_log_level_color(msg[1])
-            text_rect = draw_text(screen, msg[0], FONT_LOG, color, (pos[0], text_y))
 
+            level_text = f" [{msg[1]}]"
+            level_width = FONT_LOG.size(level_text)[0]
+            text = (
+                cut_string_to_width(
+                    msg[0], FONT_LOG, width - level_width, cut_right=True
+                )
+                + level_text
+            )
+
+            text_rect = draw_text(
+                screen,
+                text,
+                FONT_LOG,
+                color,
+                (pos[0] - FONT_LOG.size(text)[0], text_y),
+            )
             text_y -= text_rect.height + ENTRIES_PADDING
 
 
