@@ -4,6 +4,7 @@ from enum import Enum
 
 
 class Difficulty(Enum):
+    ANY = ("Any", None)  # Any difficulty allowed
     EASY = ("Standard: Easy", 104)
     NORMAL = ("Standard: Normal", 105)
     HARD = ("Standard: Hard", 106)
@@ -40,6 +41,11 @@ def difficulty_string_to_enum(value: str) -> Difficulty:
             return difficulty_enum
 
     raise ValueError(f"Cannot convert '{value}' to a Difficulty type")
+
+
+def index_to_difficulty(index: int) -> Difficulty:
+    difficultys = list(Difficulty)
+    return difficultys[index]
 
 
 def get_difficulty_names():

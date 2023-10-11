@@ -7,6 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 
 import source.smwc.params as params
+from source.logger import LoggerManager
 from source.smwc.entry import Difficulty, HackEntry, difficulty_string_to_enum
 
 BASE_URL = "https://www.smwcentral.net/?p=section&s=smwhacks"
@@ -16,7 +17,7 @@ YES_NO_DICT = {"yes": True, "no": False}
 DATETIME_PATTERN = "%Y-%m-%dT%H:%M:%S"
 
 
-def get_hack_list(
+def get_hacks(
     url=BASE_URL,
     name: str = None,
     authors: List[str] = None,
@@ -30,10 +31,6 @@ def get_hack_list(
     filter_params = params.form_filter_params(
         name, authors, tags, demo, featured, difficulty, description
     )
-    filter_params = "&".join(filter_params).replace(" ", "+")
-    if filter_params:
-        # add leading '&' which is not added by join
-        filter_params = "&" + filter_params
 
     # Add filter parameter to given URL if any
     url = url + filter_params
@@ -49,24 +46,31 @@ def get_hack_list(
         # Navigate through HTML structure
         list_content_div = soup.find("div", id="list-content")
         if not list_content_div:
-            print("The div with id='list-content' was not found.")
+            LoggerManager().logger.error(
+                "The div with id='list-content' was not found."
+            )
         else:
             table_entries = list_content_div.find("table")
 
             if not table_entries:
-                print("Table with entries was not found.")
+                LoggerManager().logger.error("Table with entries was not found.")
             else:
                 tbody = table_entries.find("tbody")
 
                 if not tbody:
-                    print("tbody not found in table.")
+                    LoggerManager().logger.error("tbody not found in table.")
                 else:
                     tr_entries = tbody.find_all("tr")
 
                     for tr_entry in tr_entries:
                         # Extract and wrap information of table entry in a HackEntry object
                         hacks.append(process_entry(tr_entry))
-
+    else:
+        LoggerManager().logger.error(
+            "HTTP status code %s: Failed to get hacks from %s.",
+            response.status_code,
+            url,
+        )
     return hacks
 
 
@@ -134,17 +138,3 @@ def extract_number(text: str) -> int:
 def yes_no_to_bool(value: str) -> bool:
     result = YES_NO_DICT.get(value.lower(), None)
     return result if result is not None else False
-
-
-def apply_bps(patch_path, source_path, dest_path):
-    # from bps.apply import apply_to_files
-    # source_patch = open(patch_path, "rb")
-    # source_rom = open(source_path, "rb")
-    # dest_path = open(dest_path, "wb")
-    # return apply_to_files(source_patch, source_rom, dest_path)
-    pass
-
-
-def apply_ips(patch_path, source_path, dest_path):
-    # ips.applyPatch(source_path, patch_path, dest_path)
-    pass

@@ -71,7 +71,10 @@ def apply_patch(original_file: str, patch_file: str, new_file: str):
         directory = "."
 
     if shutil.disk_usage(directory).free <= FILE_LIMIT:
-        return (False, f"Not enough space for creating patch at specified path '{directory}'.")
+        return (
+            False,
+            f"Not enough space for creating patch at specified path '{directory}'.",
+        )
 
     # OK, tests passed
 

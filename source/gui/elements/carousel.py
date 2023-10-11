@@ -3,8 +3,7 @@ from typing import Tuple
 import pygame
 
 import source.gui.assets as assets
-from source.gui.elements.gui_element import GUIElement
-from source.gui.constants import PADDING_BETWEEN_ELEMENTS
+from source.gui.elements.gui_element import GUIElement, PADDING_BETWEEN_ELEMENTS
 
 
 class CarouselSelect(GUIElement):
@@ -23,7 +22,9 @@ class CarouselSelect(GUIElement):
 
     def draw(self, anchor: Tuple[int, int], selected: bool):
         color = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
-        color_detail = assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+        color_detail = (
+            assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+        )
 
         # Draw label
         label_renderer = assets.FONT_MAJOR.render(self.label, True, color)

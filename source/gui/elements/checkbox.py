@@ -3,8 +3,7 @@ from typing import Tuple
 import pygame
 
 import source.gui.assets as assets
-from source.gui.elements.gui_element import GUIElement
-from source.gui.constants import PADDING_BETWEEN_ELEMENTS
+from source.gui.elements.gui_element import GUIElement, PADDING_BETWEEN_ELEMENTS
 
 SIZE = (24, 24)
 

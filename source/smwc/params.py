@@ -35,6 +35,7 @@ def form_filter_params(
     if description is not None:
         params.append(f"f%5Bdescription%5D={description}")
 
+    # Join all parameters with an &, replace spaces with + and add an & at the beginning
     filter_params = "&".join(params).replace(" ", "+")
     if filter_params:
         filter_params = "&" + filter_params

@@ -4,6 +4,8 @@ from source.gui import assets
 from source.gui.constants import HEIGHT, WIDTH
 from source.gui.screens import filter as filter_screen
 from source.gui.screens import browser as browser_screen
+from source.gui.constants import ScreenIntent
+from source.smwc.crawler import get_hacks
 
 # Initialize Pygame
 pygame.init()
@@ -21,8 +23,23 @@ def run():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # todo: arg
 
+    hacks = get_hacks()
     running = True
+    intent = ScreenIntent.BROWSER  # start with browser
+
     while running:
-        running = browser_screen.run(screen)
+        if intent == ScreenIntent.BROWSER:
+            intent = browser_screen.run(screen, hacks)
+
+        if intent == ScreenIntent.FILTER:
+            result = filter_screen.run(screen)
+
+            if isinstance(result, tuple):
+                intent, hacks = result
+            else:
+                intent = result
+
+        if intent == ScreenIntent.EXIT:
+            running = False
 
     pygame.quit()

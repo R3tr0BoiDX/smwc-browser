@@ -20,3 +20,6 @@ class LoggerManager:
         # Add handler to log to display log on screen
         self.handler = ScreenLogHandler()
         self.logger.addHandler(self.handler)
+
+    def get_logger(self) -> logging.Logger:
+        return self.logger

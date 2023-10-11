@@ -3,6 +3,8 @@ from typing import Tuple
 
 import pygame
 
+PADDING_BETWEEN_ELEMENTS = 24
+
 
 class GUIElement(ABC):
     @abstractmethod

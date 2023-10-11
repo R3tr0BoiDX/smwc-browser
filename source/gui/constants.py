@@ -1,7 +1,7 @@
-# Screen dimensions
-WIDTH, HEIGHT = 1280, 720
+from enum import Enum
 
-PADDING_BETWEEN_ELEMENTS = 24
+# Minimal screen dimensions
+WIDTH, HEIGHT = 1280, 720
 
 # Header
 LOGO_HEIGHT = 96
@@ -11,3 +11,11 @@ HEADER_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
 # Footer
 FOOTER_OFFSET = (24, 24)
 FOOTER_BUTTONS_PADDING = 32
+
+
+class ScreenIntent(Enum):
+    """Enum for screen intents."""
+
+    EXIT = 0
+    BROWSER = 1
+    FILTER = 2

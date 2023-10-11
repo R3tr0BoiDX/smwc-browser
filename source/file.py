@@ -35,8 +35,6 @@ def download_and_run(url: str):
         )
         file_path = get_library_path_for_file(file_name)
 
-        print(file_path)
-
         # check if the file is already in the library
         if file_path.is_file():
             LoggerManager().logger.info("File '%s' already in library", file_name)

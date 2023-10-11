@@ -1,13 +1,15 @@
+from typing import Union, Tuple
+
 import pygame
 
 from source.gui import assets
 from source.gui.constants import *  # pylint: disable=W0401,W0614  # noqa: F403
-from source.gui.elements import (BackgroundDrawer, CarouselSelect, Checkbox,
-                                 Textfield)
+from source.gui.elements import BackgroundDrawer, CarouselSelect, Checkbox, Textfield
 from source.gui.elements.gui_element import GUIElement
 from source.gui.helper import draw_footer_button
 from source.product_name import LONG_NAME
-from source.smwc.entry import get_difficulty_names
+from source.smwc.entry import get_difficulty_names, index_to_difficulty
+from source.smwc.crawler import get_hacks
 
 WINDOW_TITLE = LONG_NAME + ": Filter"
 
@@ -69,13 +71,14 @@ def draw_footer(screen: pygame.Surface, space: bool):
         )
 
 
-def run(screen: pygame.Surface) -> bool:
+def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent]:
     pygame.display.set_caption(WINDOW_TITLE)
     background = BackgroundDrawer(screen, assets.BACKGROUND_IMAGE)
 
+    # todo: carousel for sort by
     menu = [
         Textfield(screen, "Name:", "Words given in the name of hack"),
-        Textfield(screen, "Author:", "Creator of hack, up to 5, comma separated"),
+        Textfield(screen, "Authors:", "Creator of hack, up to 5, comma separated"),
         Textfield(screen, "Tags:", "Labeling keywords, up to 5, comma separated"),
         Checkbox(screen, "Demo:", "Hacks can be demos or need to be full length"),
         Checkbox(screen, "Featured:", "If the hack was featured before"),
@@ -91,26 +94,55 @@ def run(screen: pygame.Surface) -> bool:
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return False
+                return ScreenIntent.EXIT
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
+                if event.key in [pygame.K_DOWN, pygame.K_TAB]:
                     selected_option = (selected_option + 1) % len(menu)
                 elif event.key == pygame.K_UP:
                     selected_option = (selected_option - 1) % len(menu)
                 elif event.key == pygame.K_RETURN:
-                    # todo: apply
-                    pass
-                elif event.key == pygame.K_BACKSPACE:
-                    for element in menu:
-                        if isinstance(element, GUIElement):
-                            element.clear_value()
+                    authors = menu[1].get_value()
+                    authors = authors.split(",") if authors else None
+                    authors = (
+                        [author.strip() for author in authors]
+                        if isinstance(authors, list)
+                        else None
+                    )
+
+                    tags = menu[2].get_value()
+                    tags = tags.split(",") if tags else None
+                    tags = (
+                        [tag.strip() for tag in tags]
+                        if isinstance(tags, list)
+                        else None
+                    )
+
+                    difficulty = index_to_difficulty(menu[5].get_value())
+
+                    hacks = get_hacks(
+                        name=menu[0].get_value(),
+                        authors=authors,
+                        tags=tags,
+                        demo=menu[3].get_value(),
+                        featured=menu[4].get_value(),
+                        difficulty=difficulty,
+                        description=menu[6].get_value(),
+                    )
+
+                    return ScreenIntent.BROWSER, hacks
+
                 elif event.key == pygame.K_ESCAPE:
-                    # back to browser
-                    pass
+                    return ScreenIntent.BROWSER
 
             menu[selected_option].active(event)
             space = isinstance(menu[selected_option], Checkbox)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LCTRL] and keys[pygame.K_BACKSPACE]:
+            for element in menu:
+                if isinstance(element, GUIElement):
+                    element.clear_value()
 
         # Draw other
         background.draw()
@@ -129,3 +161,4 @@ def run(screen: pygame.Surface) -> bool:
                 element_y = element_rect.bottom + ENTRIES_PADDING
 
         pygame.display.flip()
+    return ScreenIntent.EXIT  # pragma: no cover, mypy wants it

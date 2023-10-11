@@ -3,8 +3,7 @@ from typing import Tuple
 import pygame
 
 import source.gui.assets as assets
-from source.gui.elements.gui_element import GUIElement
-from source.gui.constants import PADDING_BETWEEN_ELEMENTS
+from source.gui.elements.gui_element import GUIElement, PADDING_BETWEEN_ELEMENTS
 from source.gui.helper import cut_string_to_width
 
 SIZE = (256, 32)
@@ -23,13 +22,15 @@ class Textfield(GUIElement):
         self.screen = screen
         self.label = label
         self.description = description
-        self.text = ""
+        self.text = None
         self.cursor_visible = True
         self.cursor_timer = 0
 
     def draw(self, anchor: Tuple[int, int], selected: bool):
         color = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
-        color_detail = assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+        color_detail = (
+            assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+        )
 
         # Draw label
         label_renderer = assets.FONT_MAJOR.render(self.label, True, color)
@@ -63,7 +64,9 @@ class Textfield(GUIElement):
         pygame.draw.rect(self.screen, color, box_rect, 2)
 
         # Calculate the maximum number of characters that can fit in the textbox
-        text = cut_string_to_width(self.text, assets.FONT_MAJOR, box_rect.width - OFFSET_LEFT)
+        text = cut_string_to_width(
+            self.text, assets.FONT_MAJOR, box_rect.width - OFFSET_LEFT
+        )
 
         # Draw the text in the textbox, ensuring it doesn't exceed the maximum length
         input_text = assets.FONT_MAJOR.render(text, True, color)
@@ -94,12 +97,16 @@ class Textfield(GUIElement):
     def active(self, event: pygame.event.Event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSPACE:
-                self.text = self.text[:-1]
-            elif event.key != pygame.K_RETURN:
-                self.text += event.unicode
+                if self.text is not None:
+                    self.text = self.text[:-1]
+            elif event.key not in [pygame.K_RETURN]:  # todo: add more
+                if self.text is None:
+                    self.text = event.unicode
+                else:
+                    self.text += event.unicode
 
     def get_value(self) -> str:
         return self.text
 
     def clear_value(self):
-        self.text = ""
+        self.text = None

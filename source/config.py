@@ -13,6 +13,7 @@ CONFIG_PATH = "config.json"
 
 class Config:
     """Singleton class for parsing and providing the config."""
+
     _instance = None
 
     def __new__(cls):
