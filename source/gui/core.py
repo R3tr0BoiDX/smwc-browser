@@ -1,11 +1,13 @@
 import pygame
 
 from source.gui import assets
-from source.gui.constants import HEIGHT, WIDTH
 from source.gui.screens import filter as filter_screen
 from source.gui.screens import browser as browser_screen
 from source.gui.constants import ScreenIntent
 from source.smwc.crawler import get_hacks
+
+# Minimal screen dimensions
+WIDTH, HEIGHT = 1280, 800
 
 # Initialize Pygame
 pygame.init()
@@ -23,7 +25,7 @@ pygame.display.set_icon(assets.ICON_IMAGE)
 def run():
     # WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # todo: arg
+    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # todo: arg if fullscreen
 
     hacks = get_hacks()
     running = True

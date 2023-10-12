@@ -9,11 +9,17 @@ from source.gui.elements import (
     CarouselSelect,
     Textfield,
     RadioButton,
+    Checkbox,
 )
 from source.gui.elements.gui_element import GUIElement
 from source.gui.helper import draw_footer_button
 from source.product_name import LONG_NAME
-from source.smwc.entry import get_difficulty_names, index_to_difficulty
+from source.smwc.entry import (
+    get_difficulty_names,
+    index_to_difficulty,
+    get_sort_by_names,
+    index_to_sort_by,
+)
 from source.smwc.crawler import get_hacks
 
 WINDOW_TITLE = LONG_NAME + ": Filter"
@@ -56,7 +62,7 @@ def draw_footer(screen: pygame.Surface):
         assets.COLOR_MINOR_NORMAL,
     )
 
-    clear_react = draw_footer_button(
+    draw_footer_button(
         screen,
         " Clear filter",
         assets.BUTTON_X_IMAGE,
@@ -92,6 +98,10 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
             screen, "Type:", "Difficulty of the hack", get_difficulty_names()
         ),
         Textfield(screen, "Description:", "Words given in the description"),
+        CarouselSelect(
+            screen, "Sort by:", "Attribute to sort results by", get_sort_by_names()
+        ),
+        Checkbox(screen, "Ascending:", "Sort results in ascending order"),
     ]
 
     selected_option = 0
@@ -106,7 +116,7 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                     selected_option = (selected_option + 1) % len(menu)
                 elif event.key == pygame.K_UP:
                     selected_option = (selected_option - 1) % len(menu)
-                elif event.key == pygame.K_RETURN:
+                elif event.key in [pygame.K_RETURN, pygame.KSCAN_RETURN]:
                     authors = menu[1].get_value()
                     authors = authors.split(",") if authors else None
                     authors = (
@@ -127,6 +137,7 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                     items = list(TRANSLATE_RADIO_BUTTON.items())
                     demo = items[menu[3].get_value()][1]
                     featured = items[menu[4].get_value()][1]
+                    sort_by = index_to_sort_by(menu[7].get_value())
 
                     hacks = get_hacks(
                         name=menu[0].get_value(),
@@ -136,6 +147,8 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                         featured=featured,
                         difficulty=difficulty,
                         description=menu[6].get_value(),
+                        sort_by=sort_by,
+                        ascending=menu[8].get_value(),
                     )
 
                     return ScreenIntent.BROWSER, hacks

@@ -29,7 +29,7 @@ CURSOR_OFFSET = (SEPARATOR_OFFSET, 16)  # x, y
 SELECTION_INDENT = 16
 
 # Menu
-MENU_HEIGHT = HEIGHT - HEADER_TOTAL - FOOTER_HEIGHT
+MENU_HEIGHT = 800 - HEADER_TOTAL - FOOTER_HEIGHT  # todo: 800 is height of screen
 MENU_ENTRY_HEIGHT = 96  # px
 
 # Check box
@@ -61,7 +61,7 @@ def draw_checkbox(
 def draw_header(screen: pygame.Surface, hacks_found: bool):
     screen.blit(
         assets.LOGO_IMAGE,
-        ((WIDTH - assets.LOGO_IMAGE.get_width()) // 2, LOGO_PADDING_Y),
+        ((screen.get_width() - assets.LOGO_IMAGE.get_width()) // 2, LOGO_PADDING_Y),
     )
 
     if hacks_found:
@@ -209,7 +209,7 @@ def draw_separator(screen: pygame.Surface, entry_y: int):
         screen,
         assets.COLOR_SEPARATOR,
         (SEPARATOR_OFFSET, separator_y),
-        (WIDTH - SEPARATOR_OFFSET, separator_y),
+        (screen.get_width() - SEPARATOR_OFFSET, separator_y),
         1,
     )
 

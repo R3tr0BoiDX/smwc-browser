@@ -1,8 +1,5 @@
 from enum import Enum
 
-# Minimal screen dimensions
-WIDTH, HEIGHT = 1280, 720
-
 # Header
 LOGO_HEIGHT = 96
 LOGO_PADDING_Y = 32

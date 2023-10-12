@@ -1,6 +1,6 @@
 from typing import List
 
-from source.smwc.entry import Difficulty
+from source.smwc.entry import Difficulty, SortBy
 
 
 def form_filter_params(
@@ -11,6 +11,8 @@ def form_filter_params(
     featured: bool = None,
     difficulty: Difficulty = None,
     description: str = None,
+    sort_by: SortBy = None,
+    ascending: bool = None,
 ) -> list:
     params = []
 
@@ -35,6 +37,12 @@ def form_filter_params(
 
     if description is not None:
         params.append(f"f%5Bdescription%5D={description}")
+
+    if sort_by is not None:
+        params.append(f"o={sort_by.value[1]}")
+
+        if ascending is not None:
+            params.append(f"d={'asc' if ascending else 'desc'}")
 
     # Join all parameters with an &, replace spaces with + and add an & at the beginning
     filter_params = "&".join(params).replace(" ", "+")

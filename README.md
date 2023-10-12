@@ -3,17 +3,16 @@
 > :warning: Project is WIP
 
 - [SMW Central Browser](#smw-central-browser)
-  - [Major TODOs](#major-todos)
+  - [Urgent TODOs](#urgent-todos)
   - [Example 'config.json'](#example-configjson)
   - [Wanna help?](#wanna-help)
   - [Future ideas](#future-ideas)
 
-## Major TODOs
+## Urgent TODOs
 
 - full gamepad support
 - add sort by filter
-- turn checkboxes into radio buttons
-- refine texbox input
+- add support for multiple pages
 
 ## Example 'config.json'
 

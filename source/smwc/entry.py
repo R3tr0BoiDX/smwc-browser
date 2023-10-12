@@ -18,6 +18,16 @@ class Difficulty(Enum):
     NA = ("N/A", None)  # For the "N/A" case
 
 
+class SortBy(Enum):
+    DATE = ("Date", "date")
+    NAME = ("Name", "name")
+    FEATURED = ("Featured", "featured")
+    LENGTH = ("Length", "length")
+    RATING = ("Rating", "rating")
+    FILESIZE = ("Size", "filesize")
+    DOWNLOADS = ("Downloads", "downloads")
+
+
 @dataclass
 class HackEntry:
     """This represent a table entry for a hack on SMW Central."""
@@ -51,3 +61,13 @@ def index_to_difficulty(index: int) -> Difficulty:
 def get_difficulty_names():
     names = [difficulty.value[0] for difficulty in Difficulty]
     return names[:-1]
+
+
+def index_to_sort_by(index: int) -> SortBy:
+    sort_bys = list(SortBy)
+    return sort_bys[index]
+
+
+def get_sort_by_names():
+    names = [sort_by.value[0] for sort_by in SortBy]
+    return names

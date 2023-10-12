@@ -6,9 +6,10 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 
-import source.smwc.params as params
+from source.smwc import params
 from source.logger import LoggerManager
-from source.smwc.entry import Difficulty, HackEntry, difficulty_string_to_enum
+from source.smwc.entry import (Difficulty, HackEntry, SortBy,
+                               difficulty_string_to_enum)
 
 BASE_URL = "https://www.smwcentral.net/?p=section&s=smwhacks"
 TIMEOUT = 10  # sec
@@ -26,10 +27,12 @@ def get_hacks(
     featured: bool = None,
     difficulty: Difficulty = None,
     description: str = None,
+    sort_by: SortBy = None,
+    ascending: bool = None,
 ) -> List[HackEntry]:
     # Get filter parameter string if any
     filter_params = params.form_filter_params(
-        name, authors, tags, demo, featured, difficulty, description
+        name, authors, tags, demo, featured, difficulty, description, sort_by, ascending
     )
 
     # Add filter parameter to given URL if any
