@@ -17,6 +17,8 @@ _ = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 # Set window icon
 pygame.display.set_icon(assets.ICON_IMAGE)
 
+# todo: universally use helper.draw_text()
+
 
 def run():
     # WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
@@ -25,7 +27,7 @@ def run():
 
     hacks = get_hacks()
     running = True
-    intent = ScreenIntent.BROWSER  # start with browser
+    intent = ScreenIntent.FILTER  # start with browser
 
     while running:
         if intent == ScreenIntent.BROWSER:

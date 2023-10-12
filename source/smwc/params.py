@@ -30,7 +30,8 @@ def form_filter_params(
         params.append(form_filter_bool_param("featured", featured))
 
     if difficulty is not None:
-        params.append(f"f%5Bdifficulty%5D%5B%5D={difficulty.value[1]}")
+        if difficulty is not Difficulty.ANY:
+            params.append(f"f%5Bdifficulty%5D%5B%5D={difficulty.value[1]}")
 
     if description is not None:
         params.append(f"f%5Bdescription%5D={description}")

@@ -4,7 +4,12 @@ import pygame
 
 from source.gui import assets
 from source.gui.constants import *  # pylint: disable=W0401,W0614  # noqa: F403
-from source.gui.elements import BackgroundDrawer, CarouselSelect, Checkbox, Textfield
+from source.gui.elements import (
+    BackgroundDrawer,
+    CarouselSelect,
+    Textfield,
+    RadioButton,
+)
 from source.gui.elements.gui_element import GUIElement
 from source.gui.helper import draw_footer_button
 from source.product_name import LONG_NAME
@@ -16,6 +21,8 @@ WINDOW_TITLE = LONG_NAME + ": Filter"
 # Menu
 ENTRIES_PADDING = 8
 
+TRANSLATE_RADIO_BUTTON = {"Any": None, "Yes": True, "No": False}
+
 
 def draw_header(screen: pygame.Surface):
     screen.blit(
@@ -24,7 +31,7 @@ def draw_header(screen: pygame.Surface):
     )
 
 
-def draw_footer(screen: pygame.Surface, space: bool):
+def draw_footer(screen: pygame.Surface):
     footer_y = (
         screen.get_height() - assets.BUTTON_B_IMAGE.get_height() - FOOTER_OFFSET[1]
     )
@@ -59,17 +66,6 @@ def draw_footer(screen: pygame.Surface, space: bool):
         assets.COLOR_MINOR_NORMAL,
     )
 
-    if space:
-        draw_footer_button(
-            screen,
-            " Toggle",
-            assets.BUTTON_B_IMAGE,
-            assets.KEY_SPACE_IMAGE,
-            assets.FONT_MINOR,
-            (clear_react.right + FOOTER_BUTTONS_PADDING, footer_y),
-            assets.COLOR_MINOR_NORMAL,
-        )
-
 
 def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent]:
     pygame.display.set_caption(WINDOW_TITLE)
@@ -80,8 +76,18 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
         Textfield(screen, "Name:", "Words given in the name of hack"),
         Textfield(screen, "Authors:", "Creator of hack, up to 5, comma separated"),
         Textfield(screen, "Tags:", "Labeling keywords, up to 5, comma separated"),
-        Checkbox(screen, "Demo:", "Hacks can be demos or need to be full length"),
-        Checkbox(screen, "Featured:", "If the hack was featured before"),
+        RadioButton(
+            screen,
+            "Demo:",
+            "Hacks can be demos or need to be full length",
+            list(TRANSLATE_RADIO_BUTTON.keys()),
+        ),
+        RadioButton(
+            screen,
+            "Featured:",
+            "If the hack was featured before",
+            list(TRANSLATE_RADIO_BUTTON.keys()),
+        ),
         CarouselSelect(
             screen, "Type:", "Difficulty of the hack", get_difficulty_names()
         ),
@@ -90,7 +96,6 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
 
     selected_option = 0
     running = True
-    space = False
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -119,13 +124,16 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                     )
 
                     difficulty = index_to_difficulty(menu[5].get_value())
+                    items = list(TRANSLATE_RADIO_BUTTON.items())
+                    demo = items[menu[3].get_value()][1]
+                    featured = items[menu[4].get_value()][1]
 
                     hacks = get_hacks(
                         name=menu[0].get_value(),
                         authors=authors,
                         tags=tags,
-                        demo=menu[3].get_value(),
-                        featured=menu[4].get_value(),
+                        demo=demo,
+                        featured=featured,
                         difficulty=difficulty,
                         description=menu[6].get_value(),
                     )
@@ -136,7 +144,6 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                     return ScreenIntent.BROWSER
 
             menu[selected_option].active(event)
-            space = isinstance(menu[selected_option], Checkbox)
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LCTRL] and keys[pygame.K_BACKSPACE]:
@@ -147,7 +154,7 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
         # Draw other
         background.draw()
         draw_header(screen)
-        draw_footer(screen, space)
+        draw_footer(screen)
 
         # Draw elements
         element_x = screen.get_width() // 2

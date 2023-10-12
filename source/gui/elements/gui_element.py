@@ -5,6 +5,8 @@ import pygame
 
 PADDING_BETWEEN_ELEMENTS = 24
 
+# todo: extract draw label and description to here
+
 
 class GUIElement(ABC):
     @abstractmethod
