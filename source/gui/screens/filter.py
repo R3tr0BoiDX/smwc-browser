@@ -37,7 +37,7 @@ def draw_header(screen: pygame.Surface):
     )
 
 
-def draw_footer(screen: pygame.Surface):
+def draw_footer(screen: pygame.Surface, space: bool):
     footer_y = (
         screen.get_height() - assets.BUTTON_B_IMAGE.get_height() - FOOTER_OFFSET[1]
     )
@@ -62,7 +62,7 @@ def draw_footer(screen: pygame.Surface):
         assets.COLOR_MINOR_NORMAL,
     )
 
-    draw_footer_button(
+    clear_react = draw_footer_button(
         screen,
         " Clear filter",
         assets.BUTTON_X_IMAGE,
@@ -71,6 +71,17 @@ def draw_footer(screen: pygame.Surface):
         (apply_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
         assets.COLOR_MINOR_NORMAL,
     )
+
+    if space:
+        draw_footer_button(
+            screen,
+            " Toggle",
+            assets.BUTTON_B_IMAGE,
+            assets.KEY_SPACE_IMAGE,
+            assets.FONT_MINOR,
+            (clear_react.right + FOOTER_BUTTONS_PADDING, footer_y),
+            assets.COLOR_MINOR_NORMAL,
+        )
 
 
 def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent]:
@@ -106,6 +117,7 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
 
     selected_option = 0
     running = True
+    space = False
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -157,6 +169,7 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                     return ScreenIntent.BROWSER
 
             menu[selected_option].active(event)
+            space = isinstance(menu[selected_option], Checkbox)
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LCTRL] and keys[pygame.K_BACKSPACE]:
@@ -167,7 +180,7 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
         # Draw other
         background.draw()
         draw_header(screen)
-        draw_footer(screen)
+        draw_footer(screen, space)
 
         # Draw elements
         element_x = screen.get_width() // 2

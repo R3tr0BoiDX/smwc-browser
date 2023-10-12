@@ -20,6 +20,7 @@ _ = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 pygame.display.set_icon(assets.ICON_IMAGE)
 
 # todo: universally use helper.draw_text()
+# todo: update on screen buttons
 
 
 def run():

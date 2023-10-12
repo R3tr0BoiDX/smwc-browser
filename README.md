@@ -11,7 +11,6 @@
 ## Urgent TODOs
 
 - full gamepad support
-- add sort by filter
 - add support for multiple pages
 
 ## Example 'config.json'
