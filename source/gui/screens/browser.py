@@ -44,6 +44,9 @@ AUTHOR_OFFSET = 8  # x
 DIFFICULTY_OFFSET = NAME_OFFSET + 32  # y
 DETAIL_OFFSET = DIFFICULTY_OFFSET + 24  # y
 
+NO_HACKS_FOUND_MESSAGE = "No hacks found!"
+
+
 # todo: arg for run after patched
 
 
@@ -55,18 +58,20 @@ def draw_checkbox(
     screen.blit(image, (offset_x, offset_y))
 
 
-def draw_header(screen: pygame.Surface):
+def draw_header(screen: pygame.Surface, hacks_found: bool):
     screen.blit(
         assets.LOGO_IMAGE,
         ((WIDTH - assets.LOGO_IMAGE.get_width()) // 2, LOGO_PADDING_Y),
     )
-    draw_text(
-        screen,
-        "Demo | Featured | Hack details",
-        assets.FONT_MINOR,
-        assets.COLOR_MINOR_NORMAL,
-        (DESCRIPTION_OFFSET[0], HEADER_TOTAL - DESCRIPTION_OFFSET[1]),
-    )
+
+    if hacks_found:
+        draw_text(
+            screen,
+            "Demo | Featured | Hack details",
+            assets.FONT_MINOR,
+            assets.COLOR_MINOR_NORMAL,
+            (DESCRIPTION_OFFSET[0], HEADER_TOTAL - DESCRIPTION_OFFSET[1]),
+        )
 
 
 def draw_footer(screen: pygame.Surface):
@@ -213,12 +218,26 @@ def draw(
     screen: pygame.Surface,
     selected_entry: int,
     scroll_offset: int,
-    hack_list: list,
+    hacks: list,
 ):
+    hacks_found = len(hacks) > 0
     # Draw GUI
-    draw_header(screen)
+    draw_header(screen, hacks_found)
     draw_footer(screen)
-    draw_hack_list(screen, selected_entry, scroll_offset, hack_list)
+    draw_hack_list(screen, selected_entry, scroll_offset, hacks)
+
+    if not hacks_found:
+        text_size = assets.FONT_MAJOR.size(NO_HACKS_FOUND_MESSAGE)
+        draw_text(
+            screen,
+            NO_HACKS_FOUND_MESSAGE,
+            assets.FONT_MAJOR,
+            assets.COLOR_MAJOR_NORMAL,
+            (
+                (screen.get_width() - text_size[0]) // 2,
+                (screen.get_height() - text_size[1]) // 2,
+            ),
+        )
 
     # Update the display
     pygame.display.flip()
