@@ -1,4 +1,4 @@
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 
 import pygame
 
@@ -15,6 +15,7 @@ from source.gui.elements.gui_element import GUIElement
 from source.gui.helper import draw_footer_button
 from source.product_name import LONG_NAME
 from source.smwc.entry import (
+    HackEntry,
     get_difficulty_names,
     index_to_difficulty,
     get_sort_by_names,
@@ -44,7 +45,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
     back_rect = draw_footer_button(
         screen,
         " Back",
-        assets.BUTTON_A_IMAGE,
+        assets.BUTTON_B_IMAGE,
         assets.KEY_ESC_IMAGE,
         assets.FONT_MINOR,
         (FOOTER_OFFSET[0], footer_y),
@@ -76,12 +77,47 @@ def draw_footer(screen: pygame.Surface, space: bool):
         draw_footer_button(
             screen,
             " Toggle",
-            assets.BUTTON_B_IMAGE,
+            assets.BUTTON_A_IMAGE,
             assets.KEY_SPACE_IMAGE,
             assets.FONT_MINOR,
             (clear_react.right + FOOTER_BUTTONS_PADDING, footer_y),
             assets.COLOR_MINOR_NORMAL,
         )
+
+
+def search_hacks(menu: List[GUIElement]) -> List[HackEntry]:
+    authors = menu[1].get_value()
+    authors = authors.split(",") if authors else None
+    authors = (
+        [author.strip() for author in authors] if isinstance(authors, list) else None
+    )
+
+    tags = menu[2].get_value()
+    tags = tags.split(",") if tags else None
+    tags = [tag.strip() for tag in tags] if isinstance(tags, list) else None
+
+    difficulty = index_to_difficulty(menu[5].get_value())
+    items = list(TRANSLATE_RADIO_BUTTON.items())
+    demo = items[menu[3].get_value()][1]
+    featured = items[menu[4].get_value()][1]
+    sort_by = index_to_sort_by(menu[7].get_value())
+
+    return get_hacks(
+        name=menu[0].get_value(),
+        authors=authors,
+        tags=tags,
+        demo=demo,
+        featured=featured,
+        difficulty=difficulty,
+        description=menu[6].get_value(),
+        sort_by=sort_by,
+        ascending=menu[8].get_value(),
+    )
+
+def clear_filter(menu: List[GUIElement]):
+    for element in menu:
+        if isinstance(element, GUIElement):
+            element.clear_value()
 
 
 def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent]:
@@ -129,53 +165,30 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                 elif event.key == pygame.K_UP:
                     selected_option = (selected_option - 1) % len(menu)
                 elif event.key in [pygame.K_RETURN, pygame.KSCAN_RETURN]:
-                    authors = menu[1].get_value()
-                    authors = authors.split(",") if authors else None
-                    authors = (
-                        [author.strip() for author in authors]
-                        if isinstance(authors, list)
-                        else None
-                    )
-
-                    tags = menu[2].get_value()
-                    tags = tags.split(",") if tags else None
-                    tags = (
-                        [tag.strip() for tag in tags]
-                        if isinstance(tags, list)
-                        else None
-                    )
-
-                    difficulty = index_to_difficulty(menu[5].get_value())
-                    items = list(TRANSLATE_RADIO_BUTTON.items())
-                    demo = items[menu[3].get_value()][1]
-                    featured = items[menu[4].get_value()][1]
-                    sort_by = index_to_sort_by(menu[7].get_value())
-
-                    hacks = get_hacks(
-                        name=menu[0].get_value(),
-                        authors=authors,
-                        tags=tags,
-                        demo=demo,
-                        featured=featured,
-                        difficulty=difficulty,
-                        description=menu[6].get_value(),
-                        sort_by=sort_by,
-                        ascending=menu[8].get_value(),
-                    )
-
-                    return ScreenIntent.BROWSER, hacks
-
+                    return ScreenIntent.BROWSER, search_hacks()
                 elif event.key == pygame.K_ESCAPE:
                     return ScreenIntent.BROWSER
+
+            elif event.type == pygame.JOYHATMOTION:
+                if event.value[1] == 1:  # D-pad up
+                    selected_option = (selected_option - 1) % len(menu)
+                elif event.value[1] == -1:  # D-pad down
+                    selected_option = (selected_option + 1) % len(menu)
+
+            elif event.type == pygame.JOYBUTTONDOWN:
+                if event.button == 1:  # B button on the gamepad
+                    return ScreenIntent.BROWSER
+                elif event.button == 2:  # X button on the gamepad
+                    clear_filter(menu)
+                elif event.button == 3:  # Y button on the gamepad
+                    return ScreenIntent.BROWSER, search_hacks()
 
             menu[selected_option].active(event)
             space = isinstance(menu[selected_option], Checkbox)
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LCTRL] and keys[pygame.K_BACKSPACE]:
-            for element in menu:
-                if isinstance(element, GUIElement):
-                    element.clear_value()
+            clear_filter(menu)
 
         # Draw other
         background.draw()

@@ -81,7 +81,7 @@ def draw_footer(screen: pygame.Surface):
     apply_rect = draw_footer_button(
         screen,
         " Download and apply",
-        assets.BUTTON_B_IMAGE,
+        assets.BUTTON_A_IMAGE,
         assets.KEY_RETURN_IMAGE,
         assets.FONT_MINOR,
         (FOOTER_OFFSET[0], footer_y),
@@ -312,6 +312,8 @@ def run(screen: pygame.Surface, hacks: List[HackEntry]) -> ScreenIntent:
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:  # A button on the gamepad
                     event_select_entry(hacks, selected_entry)
+                if event.button == 1:  # B button on the gamepad
+                    return ScreenIntent.FILTER
                 elif event.button == 7:  # Start button on the gamepad
                     return ScreenIntent.EXIT
 
