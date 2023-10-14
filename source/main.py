@@ -19,21 +19,21 @@ arguments.Arguments()  # init arguments
 def main():
     """Main entry point for the application."""
     logging.basicConfig(level=LOG_LEVEL)
-    args = arguments.Arguments()
+    conf = config.Config()
 
-    if args.get_sfc_path() is None:
+    if conf.get_sfc_path() is None:
         logging.critical("No SFC path given!")
         sys.exit(1)
 
-    if args.get_sfc_path().exists() is False:
+    if conf.get_sfc_path().exists() is False:
         logging.critical("Given SFC does not exist!")
         sys.exit(1)
 
-    if args.get_sfc_path().is_file() is False:
+    if conf.get_sfc_path().is_file() is False:
         logging.critical("Given SFC is not a file!")
         sys.exit(1)
 
-    if crc32(args.get_sfc_path()) != SMW_CRC32:
+    if crc32(conf.get_sfc_path()) != SMW_CRC32:
         logging.critical("Given SFC has incorrect CRC32. Expected: %s", SMW_CRC32)
         sys.exit(1)
 

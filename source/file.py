@@ -178,7 +178,7 @@ def apply_patch(patch_path: Path, dest_path: str) -> Path:
     Returns:
         Path: The path to the patched file.
     """
-    source_path = arguments.Arguments().get_sfc_path()
+    source_path = config.Config().get_sfc_path()
 
     # IPS patches
     if str(patch_path).endswith(".ips"):

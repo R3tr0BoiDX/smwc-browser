@@ -1,12 +1,20 @@
 # SMW Central Browser
->
-> :warning: Project is WIP
+
+![SMW Central Browser Logo](media/images/logo.png)
 
 - [SMW Central Browser](#smw-central-browser)
+  - [What is this?](#what-is-this)
   - [Urgent TODOs](#urgent-todos)
   - [Example 'config.json'](#example-configjson)
-  - [Wanna help?](#wanna-help)
   - [Future ideas](#future-ideas)
+  - [Wanna help?](#wanna-help)
+- [FAQ](#faq)
+
+## What is this?
+
+Depending on your perspevtive, this can be several. Mostly, its a handy tool to browser and search for [SMW hacks](https://www.smwcentral.net/?p=section&s=smwhacks) on [SMW Central](https://www.smwcentral.net/). This tool allows you to browse through all SMW hacks submissions, search with specific filters, lets you download and patch your SMW SFC file and launches the patched ROM with your favorite emulator!
+
+From another perspective, a part of this project is a crawler (for the submession table-like pages as of right now), which allows you to interact with the submessions on a more developer friendly way. Maybe you want to build your own browser, then you might want to check out [this subfolder](source/smwc)!
 
 ## Urgent TODOs
 
@@ -22,12 +30,6 @@
 }
 ```
 
-## Wanna help?
-
-This project entirely in my free time next to my full time job. Soon, ill write my bachelor thesis and will have much less time for this project. So, if you wanna contribute and help with any feature, you're welcome! We need tests, bug fixes and new features would be nice as well. I much appreciate your consideration! :slightly_smiling_face:
-
-Constructive criticism and ideas for improvements are also always welcome!
-
 ## Future ideas
 
 (in order of importance)
@@ -40,3 +42,14 @@ Constructive criticism and ideas for improvements are also always welcome!
 - Maybe a way to delete downloaded hacks from library?
 - Support for SMW2:YI and SM64
 - Language support
+
+## Wanna help?
+
+This project entirely in my free time next to my full time job. Soon, ill write my bachelor thesis and will have much less time for this project. So, if you wanna contribute and help with any feature, you're welcome! We need tests, bug fixes and new features would be nice as well. I much appreciate your consideration! :slightly_smiling_face:
+
+Constructive criticism and ideas for improvements are also always welcome!
+
+# FAQ
+
+> Will there be support for SMW2:YI and SM64?
+Maybe one day! Its certainly a nice idea and in theory not to hard to implement

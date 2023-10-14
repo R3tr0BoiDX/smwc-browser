@@ -6,7 +6,6 @@ Date: 2023-10-03
 Description: Command line argument parsing.
 """
 import argparse
-from pathlib import Path
 
 from source.product_name import LONG_NAME
 
@@ -38,15 +37,6 @@ class Arguments:
             add_help=True,
         )
 
-        # argument for sfc path
-        parser.add_argument(
-            "-s",
-            "--sfc-path",
-            type=str,
-            help="Path to the US SFC file",
-            required=True,
-        )
-
         # fullscreen argument
         parser.add_argument(
             "-f",
@@ -70,19 +60,9 @@ class Arguments:
         args = parser.parse_args()
 
         return {
-            "sfc_path": args.sfc_path,
             "fullscreen": args.fullscreen,
             "no_launch": args.no_launch,
         }
-
-    def get_sfc_path(self) -> Path:
-        """
-        Get the path to the SFC file.
-
-        Returns:
-            str: The path to the SFC file.
-        """
-        return Path(self.args["sfc_path"])
 
     def get_fullscreen(self) -> bool:
         """

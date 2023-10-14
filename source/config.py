@@ -69,3 +69,12 @@ class Config:
             Path: The path to the launch program.
         """
         return Path(self.config["launch_program"])
+
+    def get_sfc_path(self) -> Path:
+        """
+        Get the path to the SFC file.
+
+        Returns:
+            str: The path to the SFC file.
+        """
+        return Path(self.config["sfc_path"])
