@@ -9,7 +9,7 @@ pip install -r requirements.txt -r requirements-dev.txt
 
 # Build the project
 Write-Host "Building the project..."
-pyinstaller smwc-browser.spec
+pyinstaller smwc-browser.spec --icon=resources\windows_icon.ico
 
 # Copy the config file
 Write-Host "Copying the config file..."
