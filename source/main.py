@@ -11,10 +11,9 @@ SMW_CRC32 = "B19ED489"
 
 LOG_LEVEL = logging.DEBUG
 
-logging.basicConfig(level=LOG_LEVEL)
-arguments.Arguments()  # init arguments
-config.Config()  # init config
 logger.LoggerManager()  # init logger
+config.Config()  # init config
+arguments.Arguments()  # init arguments
 
 
 def main():

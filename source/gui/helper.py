@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Union, List
 import math
 
 import pygame
@@ -44,12 +44,11 @@ def scale_image(image: pygame.Surface, scale_factor: float) -> pygame.Surface:
     return pygame.transform.scale(image, (scaled_width, scaled_height))
 
 
-# todo: add possibility to draw shortcuts
 def draw_footer_button(
     screen: pygame.Surface,
     text: str,
     button_image: pygame.Surface,
-    key_image: pygame.Surface,
+    key_image: Union[pygame.Surface, List[pygame.Surface]],
     font: pygame.font.Font,
     pos: Tuple[int, int],
     color: Tuple[int, int, int],
@@ -65,12 +64,29 @@ def draw_footer_button(
         (button_rect.right, button_rect.centery - (slash_rendered.height // 2)),
     )
 
-    key_rendered = key_image.get_rect()
-    key_rect = draw_image(
-        screen,
-        key_image,
-        (slash_rect.right, slash_rect.centery - (key_rendered.height // 2)),
-    )
+    to_render = [key_image] if isinstance(key_image, pygame.Surface) else key_image
+    keys_rect = slash_rect
+    for key in to_render:
+        # draw key image
+        key_rendered = key.get_rect()
+        key_rect = draw_image(
+            screen,
+            key,
+            (keys_rect.right, keys_rect.centery - (key_rendered.height // 2)),
+        )
+        keys_rect = keys_rect.union(key_rect)
+
+        # if not last key, draw plus sign between keys
+        if key != to_render[-1]:
+            plus_rendered = font.render(text, True, color).get_rect()
+            plus_rect = draw_text(
+                screen,
+                " + ",
+                font,
+                color,
+                (key_rect.right, key_rect.centery - (plus_rendered.height // 2)),
+            )
+            keys_rect = keys_rect.union(plus_rect)
 
     text_rendered = font.render(text, True, color).get_rect()
     text_rect = draw_text(
@@ -78,7 +94,7 @@ def draw_footer_button(
         text,
         font,
         color,
-        (key_rect.right, key_rect.centery - (text_rendered.height // 2)),
+        (keys_rect.right, keys_rect.centery - (text_rendered.height // 2)),
     )
 
     return button_rect.unionall([slash_rect, key_rect, text_rect])

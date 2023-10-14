@@ -5,8 +5,11 @@ Date: 2023-10-02
 
 Description: Config file parsing.
 """
-from pathlib import Path
 import json
+import sys
+from pathlib import Path
+
+from source.logger import LoggerManager
 
 CONFIG_PATH = "config.json"
 
@@ -25,7 +28,11 @@ class Config:
     def init_singleton(self):
         """Initialize singleton."""
         # pylint: disable=attribute-defined-outside-init
-        self.config = self.read_json(Path(CONFIG_PATH))
+        try:
+            self.config = self.read_json(Path(CONFIG_PATH))
+        except FileNotFoundError as error:
+            LoggerManager().logger.critical(error)
+            sys.exit(1)
 
     def read_json(self, config_file: Path) -> dict:
         """Read the config file.
@@ -35,8 +42,13 @@ class Config:
 
         Returns:
             dict: The config as a dictionary.
+
+        Raises:
+            FileNotFoundError: If the config file does not exist.
         """
-        # todo: add check if present
+        if not config_file.exists():
+            raise FileNotFoundError(f"Config file {config_file} not found.")
+
         with open(config_file, mode="r", encoding="utf-8") as file:
             return json.load(file)
 

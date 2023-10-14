@@ -82,7 +82,10 @@ class Checkbox(GUIElement):
             # Keyboard input
             if event.key == pygame.K_SPACE:
                 self.checked = not self.checked
-        # todo: gamepad input
+
+        elif event.type == pygame.JOYBUTTONDOWN:
+            if event.button == 0:  # A button on the gamepad
+                self.checked = not self.checked
 
     def get_value(self) -> bool:
         return self.checked

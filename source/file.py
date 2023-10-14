@@ -2,6 +2,7 @@ import glob
 import os
 import subprocess
 import tempfile
+import time
 import zipfile
 from pathlib import Path
 import urllib.parse
@@ -15,6 +16,7 @@ from source import config
 from source import ips
 from source import arguments
 from source.logger import LoggerManager
+from source.arguments import Arguments
 
 TIMEOUT = 10  # sec
 
@@ -85,14 +87,27 @@ def download_file(file_url: str) -> Path:
     file_path = Path(os.path.join(tempfile.mkdtemp(), file_name))
 
     # download the file
-    response = requests.get(file_url, timeout=TIMEOUT)
+    response = requests.get(file_url, stream=True, timeout=TIMEOUT)
+    total_size = int(response.headers.get('content-length', 1))
+    downloaded_size = 0
+    last_log_time = time.time()
+    for data in response.iter_content(chunk_size=4096):
+        downloaded_size += len(data)
+        file_path.write_bytes(data)
+        if time.time() - last_log_time > 1:
+            LoggerManager().logger.info(
+                "Downloading %s: %d%%",
+                file_name,
+                int(downloaded_size / total_size * 100)
+            )
+            last_log_time = time.time()
+
+        # open the local file in binary write mode and write the content of the response to it
+        with open(file_path, mode="ab") as file:
+            file.write(data)
 
     # check if the download was successful
     if response.status_code == 200:
-        # open the local file in binary write mode and write the content of the response to it
-        with open(file_path, mode="wb") as file:
-            file.write(response.content)
-
         LoggerManager().logger.info("File downloaded and saved as %s", file_path)
         return file_path
 
@@ -186,7 +201,16 @@ def run_patched_file(file_path: Path):
     Args:
         file_path (Path): The path to the patched file.
     """
-    program = config.Config().get_launch_program_path()
+    # check if the program should be launched
+    if Arguments().get_no_launch():
+        LoggerManager().logger.info("Not launching program after patching as requested")
+        return
+
+    try:
+        program = config.Config().get_launch_program_path()
+    except KeyError:
+        LoggerManager().logger.info("No program to launch defined")
+        return
     LoggerManager().logger.info("Trying to run ' %s %s'", program, file_path)
     try:
         subprocess.run([program, file_path], check=True)

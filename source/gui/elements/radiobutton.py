@@ -102,8 +102,13 @@ class RadioButton(GUIElement):
                 self.selected_index = (self.selected_index - 1) % len(self.values)
             elif event.key == pygame.K_RIGHT:
                 self.selected_index = (self.selected_index + 1) % len(self.values)
-            # todo: gamepad input
 
+        elif event.type == pygame.JOYHATMOTION:
+            if event.value[0] == -1:  # D-pad left
+                self.selected_index = (self.selected_index - 1) % len(self.values)
+            elif event.value[0] == 1:  # D-pad right
+                self.selected_index = (self.selected_index + 1) % len(self.values)
+                
     def get_value(self) -> bool:
         return self.selected_index
 

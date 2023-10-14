@@ -1,13 +1,11 @@
 import pygame
 
+from source.arguments import Arguments
 from source.gui import assets
-from source.gui.screens import filter as filter_screen
+from source.gui.constants import HEIGHT, WIDTH, ScreenIntent
 from source.gui.screens import browser as browser_screen
-from source.gui.constants import ScreenIntent
+from source.gui.screens import filter as filter_screen
 from source.smwc.crawler import get_hacks
-
-# Minimal screen dimensions
-WIDTH, HEIGHT = 1280, 800
 
 # Initialize Pygame
 pygame.init()
@@ -20,17 +18,19 @@ _ = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 pygame.display.set_icon(assets.ICON_IMAGE)
 
 # todo: universally use helper.draw_text()
-# todo: update on screen buttons
 
 
 def run():
-    # WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+    """Run the GUI."""
+
+    # Initialize screen
+    if Arguments().get_fullscreen():
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # todo: arg if fullscreen
 
     hacks = get_hacks()
     running = True
-    intent = ScreenIntent.FILTER  # start with browser
+    intent = ScreenIntent.BROWSER  # start with browser
 
     while running:
         if intent == ScreenIntent.BROWSER:

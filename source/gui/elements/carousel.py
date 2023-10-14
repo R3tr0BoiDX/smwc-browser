@@ -68,7 +68,12 @@ class CarouselSelect(GUIElement):
                 self.selected_index = (self.selected_index - 1) % len(self.entries)
             elif event.key == pygame.K_RIGHT:
                 self.selected_index = (self.selected_index + 1) % len(self.entries)
-            # todo: gamepad input
+
+        elif event.type == pygame.JOYHATMOTION:
+            if event.value[0] == -1:  # D-pad left
+                self.selected_index = (self.selected_index - 1) % len(self.entries)
+            elif event.value[0] == 1:  # D-pad right
+                self.selected_index = (self.selected_index + 1) % len(self.entries)
 
     def get_value(self) -> int:
         return self.selected_index

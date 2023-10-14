@@ -7,7 +7,9 @@
             "request": "launch",
             "module": "source.main",
             "args": [
-                "data/baserom.sfc"
+                "-s",
+                "data/baserom.sfc",
+                "-l"
             ],
             "console": "integratedTerminal",
             "justMyCode": true
@@ -18,7 +20,22 @@
             "request": "launch",
             "module": "source.main",
             "args": [
-                "data/baserom.sfc"
+                "-s",
+                "data/baserom.sfc",
+                "-l"
+            ],
+            "console": "externalTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Run main fullscreen",
+            "type": "python",
+            "request": "launch",
+            "module": "source.main",
+            "args": [
+                "-s",
+                "data/baserom.sfc",
+                "-f",
             ],
             "console": "externalTerminal",
             "justMyCode": true

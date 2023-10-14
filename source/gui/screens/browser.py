@@ -29,7 +29,7 @@ CURSOR_OFFSET = (SEPARATOR_OFFSET, 16)  # x, y
 SELECTION_INDENT = 16
 
 # Menu
-MENU_HEIGHT = 800 - HEADER_TOTAL - FOOTER_HEIGHT  # todo: 800 is height of screen
+MENU_HEIGHT = HEIGHT - HEADER_TOTAL - FOOTER_HEIGHT
 MENU_ENTRY_HEIGHT = 96  # px
 
 # Check box
@@ -45,9 +45,6 @@ DIFFICULTY_OFFSET = NAME_OFFSET + 32  # y
 DETAIL_OFFSET = DIFFICULTY_OFFSET + 24  # y
 
 NO_HACKS_FOUND_MESSAGE = "No hacks found!"
-
-
-# todo: arg for run after patched
 
 
 def draw_checkbox(
@@ -92,7 +89,7 @@ def draw_footer(screen: pygame.Surface):
     filter_rect = draw_footer_button(
         screen,
         " Search with filter",
-        assets.BUTTON_Y_IMAGE,
+        assets.BUTTON_B_IMAGE,
         assets.KEY_F_IMAGE,
         assets.FONT_MINOR,
         (apply_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
@@ -160,7 +157,7 @@ def draw_hack_list(
         # difficulty
         draw_text(
             screen,
-            entry.difficulty.value[0],
+            f"{entry.difficulty.value[0]}: {entry.length} {'exit' if entry.length == 1 else 'exits'}",
             assets.FONT_MINOR,
             assets.COLOR_MINOR_NORMAL
             if not is_selected
@@ -173,7 +170,6 @@ def draw_hack_list(
             screen,
             (
                 f"{str(entry.rating) + '/5.0' if entry.rating else 'No ratings given'} | "
-                f"{entry.length} {'exit' if entry.length == 1 else 'exits'} | "
                 f"{entry.download_count} downloads | {entry.date.strftime('%c')} | {entry.size}"
             ),
             assets.FONT_MINOR,
@@ -292,7 +288,7 @@ def run(screen: pygame.Surface, hacks: List[HackEntry]) -> ScreenIntent:
                     selected_entry, scroll_offset = event_selection_down(
                         selected_entry, scroll_offset, len(hacks)
                     )
-                elif event.key == pygame.K_RETURN:
+                elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                     event_select_entry(hacks, selected_entry)
                 elif event.key == pygame.K_ESCAPE:
                     return ScreenIntent.EXIT

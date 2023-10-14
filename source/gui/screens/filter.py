@@ -23,11 +23,10 @@ from source.smwc.entry import (
 )
 from source.smwc.crawler import get_hacks
 
-WINDOW_TITLE = LONG_NAME + ": Filter"
+WINDOW_TITLE = LONG_NAME + ": Search with filters"
 
 # Menu
 ENTRIES_PADDING = 8
-
 TRANSLATE_RADIO_BUTTON = {"Any": None, "Yes": True, "No": False}
 
 
@@ -44,7 +43,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
     )
     back_rect = draw_footer_button(
         screen,
-        " Back",
+        ": Back",
         assets.BUTTON_B_IMAGE,
         assets.KEY_ESC_IMAGE,
         assets.FONT_MINOR,
@@ -55,7 +54,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
     # todo: make y dependent on previous rect.top ... somehow
     apply_rect = draw_footer_button(
         screen,
-        " Apply filter",
+        ": Apply filter",
         assets.BUTTON_Y_IMAGE,
         assets.KEY_RETURN_IMAGE,
         assets.FONT_MINOR,
@@ -65,9 +64,9 @@ def draw_footer(screen: pygame.Surface, space: bool):
 
     clear_react = draw_footer_button(
         screen,
-        " Clear filter",
+        ": Clear filter",
         assets.BUTTON_X_IMAGE,
-        assets.KEY_BACKSPACE_IMAGE,
+        [assets.KEY_CTRL_IMAGE, assets.KEY_BACKSPACE_IMAGE],
         assets.FONT_MINOR,
         (apply_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
         assets.COLOR_MINOR_NORMAL,
@@ -76,7 +75,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
     if space:
         draw_footer_button(
             screen,
-            " Toggle",
+            ": Toggle",
             assets.BUTTON_A_IMAGE,
             assets.KEY_SPACE_IMAGE,
             assets.FONT_MINOR,
@@ -114,6 +113,7 @@ def search_hacks(menu: List[GUIElement]) -> List[HackEntry]:
         ascending=menu[8].get_value(),
     )
 
+
 def clear_filter(menu: List[GUIElement]):
     for element in menu:
         if isinstance(element, GUIElement):
@@ -124,7 +124,6 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
     pygame.display.set_caption(WINDOW_TITLE)
     background = BackgroundDrawer(screen, assets.BACKGROUND_IMAGE)
 
-    # todo: carousel for sort by
     menu = [
         Textfield(screen, "Name:", "Words given in the name of hack"),
         Textfield(screen, "Authors:", "Creator of hack, up to 5, comma separated"),
@@ -165,15 +164,15 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                 elif event.key == pygame.K_UP:
                     selected_option = (selected_option - 1) % len(menu)
                 elif event.key in [pygame.K_RETURN, pygame.KSCAN_RETURN]:
-                    return ScreenIntent.BROWSER, search_hacks()
+                    return ScreenIntent.BROWSER, search_hacks(menu)
                 elif event.key == pygame.K_ESCAPE:
                     return ScreenIntent.BROWSER
 
             elif event.type == pygame.JOYHATMOTION:
-                if event.value[1] == 1:  # D-pad up
-                    selected_option = (selected_option - 1) % len(menu)
-                elif event.value[1] == -1:  # D-pad down
+                if event.value[1] == -1:  # D-pad down
                     selected_option = (selected_option + 1) % len(menu)
+                elif event.value[1] == 1:  # D-pad up
+                    selected_option = (selected_option - 1) % len(menu)
 
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 1:  # B button on the gamepad
@@ -181,7 +180,7 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent
                 elif event.button == 2:  # X button on the gamepad
                     clear_filter(menu)
                 elif event.button == 3:  # Y button on the gamepad
-                    return ScreenIntent.BROWSER, search_hacks()
+                    return ScreenIntent.BROWSER, search_hacks(menu)
 
             menu[selected_option].active(event)
             space = isinstance(menu[selected_option], Checkbox)

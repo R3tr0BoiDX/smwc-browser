@@ -10,7 +10,7 @@
 
 ## Urgent TODOs
 
-- full gamepad support
+- better gamepad support and scrolling
 - add support for multiple pages
 
 ## Example 'config.json'
@@ -28,9 +28,13 @@ This project entirely in my free time next to my full time job. Soon, ill write 
 
 ## Future ideas
 
-- Wrapper for hack entry site
-- Wrapper for hack screenshots
-- Screen for hack entry
-- Screenshots in browser screen (and hack entry if already done)
+(in order of importance)
+
+- File browser for unzipped hack, if there are multiple patch files
+  - Should include an option to show all files and apply them as patches if the user wishes so
+- Wrapper and screen for hack entry site
+- Wrapper for hack screenshots and display in browser
 - Save filter parameter
+- Maybe a way to delete downloaded hacks from library?
 - Support for SMW2:YI and SM64
+- Language support
