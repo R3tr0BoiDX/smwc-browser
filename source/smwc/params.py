@@ -2,6 +2,8 @@ from typing import List
 
 from source.smwc.entities import Difficulty, SortBy
 
+PREFIX = "/?p=section&s=smwhacks"
+
 
 def form_filter_params(
     name: str = None,
@@ -47,9 +49,9 @@ def form_filter_params(
     # Join all parameters with an &, replace spaces with + and add an & at the beginning
     filter_params = "&".join(params).replace(" ", "+")
     if filter_params:
-        filter_params = "&" + filter_params
+        filter_params = f"&{filter_params}"
 
-    return filter_params
+    return PREFIX + filter_params
 
 
 def form_filter_bool_param(name: str, value: bool) -> str:

@@ -32,7 +32,12 @@ def run():
 
     while running:
         if intent == ScreenIntent.BROWSER:
-            intent = browser_screen.run(screen, page)
+            result = browser_screen.run(screen, page)
+            
+            if isinstance(result, tuple):
+                intent, page = result
+            else:
+                intent = result
 
         if intent == ScreenIntent.FILTER:
             result = filter_screen.run(screen)

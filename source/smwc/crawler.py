@@ -1,7 +1,7 @@
 import logging
 import re
 from datetime import datetime
-from typing import List
+from typing import List, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -17,7 +17,7 @@ from source.smwc.entities import (
     Page,
 )
 
-BASE_URL = "https://www.smwcentral.net/?p=section&s=smwhacks"
+BASE_URL = "https://www.smwcentral.net"
 TIMEOUT = 10  # sec
 
 YES_NO_DICT = {"yes": True, "no": False}
@@ -25,7 +25,7 @@ DATETIME_PATTERN = "%Y-%m-%dT%H:%M:%S"
 
 
 def get_page(
-    url=BASE_URL,
+    url=None,
     name: str = None,
     authors: List[str] = None,
     tags: List[str] = None,
@@ -36,13 +36,24 @@ def get_page(
     sort_by: SortBy = None,
     ascending: bool = None,
 ) -> Page:
-    # Get filter parameter string if any
-    filter_params = params.form_filter_params(
-        name, authors, tags, demo, featured, difficulty, description, sort_by, ascending
-    )
+    if url is None:
+        # Get filter parameter string if any
+        filter_params = params.form_filter_params(
+            name,
+            authors,
+            tags,
+            demo,
+            featured,
+            difficulty,
+            description,
+            sort_by,
+            ascending,
+        )
 
-    # Add filter parameter to given URL if any
-    url = url + filter_params
+        # Add filter parameter to given URL if any
+        url = BASE_URL + filter_params
+    else:
+        url = BASE_URL + url
 
     # Get website data
     response = requests.get(url, timeout=TIMEOUT)
@@ -51,15 +62,13 @@ def get_page(
         # Soup up HTML response
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Get hacks from soup
+        # Extract information from soup
         hacks = get_hacks(soup)
-
-        # Get page list from soup
         page_list = get_page_list(soup)
+        submissions, showing_from, showing_to = get_numbers(soup)
 
-        return Page(hacks, page_list)
+        return Page(hacks, page_list, submissions, showing_from, showing_to)
 
-    # else:
     LoggerManager().logger.error(
         "HTTP status code %s: Failed to get hacks from %s.",
         response.status_code,
@@ -127,6 +136,41 @@ def get_page_list(soup: BeautifulSoup) -> PageList:
                 pages[page_number] = href
 
     return PageList(active_page, pages)
+
+
+def get_numbers(soup: BeautifulSoup) -> Tuple[int, int, int]:
+    submissions = 0
+    showing_from = 0
+    showing_to = 0
+
+    # Navigate through HTML structure
+
+    # Find the div with id='bottom-menu'
+    bottom_menu_div = soup.find("div", id="bottom-menu")
+
+    if not bottom_menu_div:
+        LoggerManager().logger.error("The div with id='bottom-menu' was not found.")
+    else:
+        # Find first p element
+        p_element = bottom_menu_div.find("p")
+
+        if not p_element:
+            LoggerManager().logger.error(
+                "The p element in the bottom menu was not found."
+            )
+        else:
+            # Find all strong elements
+            strong_elements = p_element.find_all("strong")
+
+            if not strong_elements:
+                LoggerManager().logger.error("No strong elements were found.")
+            else:
+                # Get the numbers from the strong elements
+                submissions = int(strong_elements[0].text.replace(",", ""))
+                showing_from = int(strong_elements[1].text)
+                showing_to = int(strong_elements[2].text)
+
+    return submissions, showing_from, showing_to
 
 
 def process_entry(table_entry):

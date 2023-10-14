@@ -54,11 +54,20 @@ class PageList:
     active_page: int
     pages: dict
 
+    def get_next_page_url(self):
+        return self.pages.get(self.active_page + 1)
+
+    def get_previous_page_url(self):
+        return self.pages.get(self.active_page - 1)
+
 
 @dataclass
 class Page:
     hacks: List[HackEntry]
     page_list: PageList
+    submissions: int
+    showing_from: int
+    showing_to: int
 
 
 def difficulty_string_to_enum(value: str) -> Difficulty:

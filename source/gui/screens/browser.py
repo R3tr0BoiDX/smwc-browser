@@ -1,16 +1,17 @@
-from typing import Tuple
 import threading
+from typing import Tuple, Union
 
 import pygame
 
-import source.gui.assets as assets
 from source import file
-from source.logger import LoggerManager
+from source.gui import assets
 from source.gui.constants import *  # pylint: disable=W0401,W0614  # noqa: F403
 from source.gui.elements import BackgroundDrawer
-from source.gui.helper import draw_text, draw_footer_button, get_colors
+from source.gui.helper import draw_footer_button, draw_text, get_colors
+from source.logger import LoggerManager
 from source.product_name import LONG_NAME
 from source.smwc.entities import Page
+from source.smwc.crawler import get_page
 
 WINDOW_TITLE = LONG_NAME
 
@@ -44,7 +45,7 @@ AUTHOR_OFFSET = (8, 8)
 NO_HACKS_FOUND_MESSAGE = "No hacks found!"
 
 
-def draw_header(screen: pygame.Surface, hacks_found: bool):
+def draw_header(screen: pygame.Surface, hacks_found: bool, page: Page):
     logo_rect = screen.blit(
         assets.LOGO_IMAGE,
         ((screen.get_width() - assets.LOGO_IMAGE.get_width()) // 2, HEADER_OFFSET[1]),
@@ -64,6 +65,23 @@ def draw_header(screen: pygame.Surface, hacks_found: bool):
             assets.FONT_MINOR,
             assets.COLOR_MINOR_NORMAL,
             (DESCRIPTION_OFFSET[0], HEADER_TOTAL - DESCRIPTION_OFFSET[1]),
+        )
+
+        max_page = max(page.page_list.pages.keys())
+        pages_text = (
+            f"Submissions: {page.submissions} - Entry {page.showing_from} to {page.showing_to} -  "
+            f"Page {page.page_list.active_page}/{max_page}"
+        )
+        pages_text_size = assets.FONT_MINOR.size(pages_text)
+        draw_text(
+            screen,
+            pages_text,
+            assets.FONT_MINOR,
+            assets.COLOR_MINOR_NORMAL,
+            (
+                screen.get_width() - pages_text_size[0] - DESCRIPTION_OFFSET[0],
+                HEADER_TOTAL - DESCRIPTION_OFFSET[1],
+            ),
         )
 
 
@@ -158,7 +176,7 @@ def draw_hack_list(
             (difficulty_rect.left, difficulty_rect.bottom),
         )
 
-        # todo: redo this
+        # todo: redo check checkbox positioning, align text after them
         draw_checkbox(screen, entry.demo, entry_y, CHECKBOX_DEMO_OFFSET + indent)
         draw_checkbox(
             screen, entry.featured, entry_y, CHECKBOX_FEATURED_OFFSET + indent
@@ -202,13 +220,13 @@ def draw(
     screen: pygame.Surface,
     selected_entry: int,
     scroll_offset: int,
-    hacks: list,
+    page: Page,
 ):
-    hacks_found = len(hacks) > 0
+    hacks_found = len(page.hacks) > 0
     # Draw GUI
-    draw_header(screen, hacks_found)
+    draw_header(screen, hacks_found, page)
     draw_footer(screen)
-    draw_hack_list(screen, selected_entry, scroll_offset, hacks)
+    draw_hack_list(screen, selected_entry, scroll_offset, page.hacks)
 
     if not hacks_found:
         text_size = assets.FONT_MAJOR.size(NO_HACKS_FOUND_MESSAGE)
@@ -253,7 +271,23 @@ def event_select_entry(hack_list: list, selected_entry: int):
     ).start()
 
 
-def run(screen: pygame.Surface, page: Page) -> ScreenIntent:
+def event_next_page(page: Page):
+    next_page = page.page_list.get_next_page_url()
+    if next_page:
+        return get_page(url=next_page)
+    return None
+
+
+def event_previous_page(page: Page):
+    previous_page = page.page_list.get_previous_page_url()
+    if previous_page:
+        return get_page(url=previous_page)
+    return None
+
+
+def run(
+    screen: pygame.Surface, page: Page
+) -> Union[Tuple[ScreenIntent, Page], ScreenIntent]:
     # Init window
     pygame.display.set_caption(LONG_NAME)
     background = BackgroundDrawer(screen, assets.BACKGROUND_IMAGE)
@@ -292,6 +326,18 @@ def run(screen: pygame.Surface, page: Page) -> ScreenIntent:
                     selected_entry, scroll_offset = event_selection_down(
                         selected_entry, scroll_offset, len(page.hacks)
                     )
+                if event.value[0] == 1:  # D-pad right
+                    next_page = event_next_page(page)
+                    if next_page:
+                        page = next_page
+                        selected_entry = 0
+                        scroll_offset = 0
+                elif event.value[0] == -1:  # D-pad left
+                    previous_page = event_previous_page(page)
+                    if previous_page:
+                        page = previous_page
+                        selected_entry = 0
+                        scroll_offset = 0
 
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:  # A button on the gamepad
@@ -302,4 +348,4 @@ def run(screen: pygame.Surface, page: Page) -> ScreenIntent:
                     return ScreenIntent.EXIT
 
         background.draw()
-        draw(screen, selected_entry, scroll_offset, page.hacks)
+        draw(screen, selected_entry, scroll_offset, page)
