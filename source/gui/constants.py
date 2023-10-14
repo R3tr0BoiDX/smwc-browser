@@ -12,8 +12,8 @@ if Arguments().get_fullscreen():  # todo: not a big fan of this solution
 
 # Header
 LOGO_HEIGHT = 96
-LOGO_PADDING_Y = 32
-HEADER_TOTAL = LOGO_HEIGHT + (2 * LOGO_PADDING_Y)
+HEADER_OFFSET = (32, 32)
+HEADER_TOTAL = LOGO_HEIGHT + (2 * HEADER_OFFSET[1])
 
 # Footer
 FOOTER_OFFSET = (24, 24)

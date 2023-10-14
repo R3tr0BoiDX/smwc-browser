@@ -87,27 +87,32 @@ def download_file(file_url: str) -> Path:
     file_path = Path(os.path.join(tempfile.mkdtemp(), file_name))
 
     # download the file
-    response = requests.get(file_url, stream=True, timeout=TIMEOUT)
-    total_size = int(response.headers.get('content-length', 1))
-    downloaded_size = 0
-    last_log_time = time.time()
-    for data in response.iter_content(chunk_size=4096):
-        downloaded_size += len(data)
-        file_path.write_bytes(data)
-        if time.time() - last_log_time > 1:
-            LoggerManager().logger.info(
-                "Downloading %s: %d%%",
-                file_name,
-                int(downloaded_size / total_size * 100)
-            )
-            last_log_time = time.time()
+    LoggerManager().logger.info("Downloading %s", file_name)
+    response = requests.get(file_url, timeout=TIMEOUT)
 
-        # open the local file in binary write mode and write the content of the response to it
-        with open(file_path, mode="ab") as file:
-            file.write(data)
+    # todo: this would be neat, but downloaded files are corrupted
+    # response = requests.get(file_url, stream=True, timeout=TIMEOUT)
+    # total_size = int(response.headers.get('content-length', 0))
+    # downloaded_size = 0
+    # last_log_time = time.time()
+    # for data in response.iter_content(chunk_size=1024):
+    #     downloaded_size += len(data)
+    #     file_path.write_bytes(data)
+    #     if time.time() - last_log_time > 1 and total_size > 0:
+    #         LoggerManager().logger.info(
+    #             "Downloading %s: %d%%",
+    #             file_name,
+    #             int(downloaded_size / total_size * 100)
+    #         )
+    #         last_log_time = time.time()
+    #     with open(file_path, mode="ab") as file:
+    #         file.write(data)
 
     # check if the download was successful
     if response.status_code == 200:
+        with open(file_path, mode="wb") as file:
+            file.write(response.content)
+
         LoggerManager().logger.info("File downloaded and saved as %s", file_path)
         return file_path
 

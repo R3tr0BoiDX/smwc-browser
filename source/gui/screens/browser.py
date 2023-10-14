@@ -56,9 +56,16 @@ def draw_checkbox(
 
 
 def draw_header(screen: pygame.Surface, hacks_found: bool):
-    screen.blit(
+    logo_rect = screen.blit(
         assets.LOGO_IMAGE,
-        ((screen.get_width() - assets.LOGO_IMAGE.get_width()) // 2, LOGO_PADDING_Y),
+        ((screen.get_width() - assets.LOGO_IMAGE.get_width()) // 2, HEADER_OFFSET[1]),
+    )
+
+    # logger
+    LoggerManager().handler.screen_logger.draw(
+        screen,
+        (screen.get_width() - HEADER_OFFSET[0], HEADER_OFFSET[1]),
+        screen.get_width() - (logo_rect.right + HEADER_OFFSET[0]),
     )
 
     if hacks_found:
@@ -96,7 +103,7 @@ def draw_footer(screen: pygame.Surface):
         assets.COLOR_MINOR_NORMAL,
     )
 
-    exit_rect = draw_footer_button(
+    draw_footer_button(
         screen,
         " Exit",
         assets.BUTTON_START_IMAGE,
@@ -104,14 +111,6 @@ def draw_footer(screen: pygame.Surface):
         assets.FONT_MINOR,
         (filter_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
         assets.COLOR_MINOR_NORMAL,
-    )
-
-    # logger
-    footer_y = screen.get_height() - assets.FONT_LOG.get_height() - FOOTER_OFFSET[1]
-    LoggerManager().handler.screen_logger.draw(
-        screen,
-        (screen.get_width() - FOOTER_OFFSET[0], footer_y),
-        screen.get_width() - (exit_rect.right + FOOTER_BUTTONS_PADDING),
     )
 
 

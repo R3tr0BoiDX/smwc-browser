@@ -33,7 +33,7 @@ TRANSLATE_RADIO_BUTTON = {"Any": None, "Yes": True, "No": False}
 def draw_header(screen: pygame.Surface):
     screen.blit(
         assets.LOGO_IMAGE,
-        ((screen.get_width() - assets.LOGO_IMAGE.get_width()) // 2, LOGO_PADDING_Y),
+        ((screen.get_width() - assets.LOGO_IMAGE.get_width()) // 2, HEADER_OFFSET[1]),
     )
 
 

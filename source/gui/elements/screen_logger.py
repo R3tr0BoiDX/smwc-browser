@@ -6,10 +6,10 @@ import pygame
 
 from source.gui.helper import draw_text, cut_string_to_width
 from source.gui.assets import COLOR_MINOR_NORMAL, FONT_LOG
+from source.gui.constants import LOGO_HEIGHT
 
-MAX_LENGTH = 5
 
-ENTRIES_PADDING = 0
+MAX_LENGTH = LOGO_HEIGHT // FONT_LOG.get_height()
 
 COLOR_WARN = (255, 207, 41)
 COLOR_ERROR = (214, 71, 24)
@@ -56,7 +56,7 @@ class ScreenLogger:
                 color,
                 (pos[0] - FONT_LOG.size(text)[0], text_y),
             )
-            text_y -= text_rect.height + ENTRIES_PADDING
+            text_y += text_rect.height
 
 
 def get_log_level_color(level: str) -> Tuple[int, int, int]:
