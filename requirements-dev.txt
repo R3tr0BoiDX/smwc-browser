@@ -2,3 +2,4 @@ pylint
 deptry
 flake8
 mypy
+pyinstaller
