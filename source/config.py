@@ -32,6 +32,7 @@ class Config:
             self.config = self.read_json(Path(CONFIG_PATH))
         except FileNotFoundError as error:
             LoggerManager().logger.critical(error)
+            print(error)
             sys.exit(1)
 
     def read_json(self, config_file: Path) -> dict:

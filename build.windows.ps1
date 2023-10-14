@@ -1,4 +1,4 @@
-# May need to run:
+# May need to run in order be be able to execute:
 # Set-ExecutionPolicy RemoteSigned
 
 # Create a virtual environment
@@ -13,11 +13,11 @@ pyinstaller smwc-browser.spec
 
 # Copy the config file
 Write-Host "Copying the config file..."
-Copy-Item .\config.example.json .\dist\smwc-browser\config.example.json
+Copy-Item .\config.example.json .\dist\config.example.json
 
 # Copy the media folder
 Write-Host "Copying the media folder..."
-Copy-Item .\media .\dist\smwc-browser\media -Recurse
+Copy-Item .\media .\dist\media -Recurse
 
 # Zipping the dist folder
 Write-Host "Zipping the dist folder..."

@@ -28,10 +28,13 @@ There are two way for you to install this. You can download precompiled binaries
 
 ```json
 {
+
  "library_path": "/path/to/your/location/where/to/save/patched/file/",
  "launch_program": "/path/to/application/to/launch/patched/file/with"
 }
 ```
+
+> :warning: Windows handels its path then Linuxa and you will need to escape your paths! They will look something like this: `"sfc_path": "C:\\Users\\User\\Games\\baserom.us.sfc`
 
 ## Future ideas
 
