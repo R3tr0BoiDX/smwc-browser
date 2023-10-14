@@ -34,7 +34,7 @@ def get_width() -> int:
         int: The screen width.
     """
     width = WIDTH
-    if Arguments().get_fullscreen():
+    if not Arguments().get_no_fullscreen():
         if not pygame.display.get_init():
             pygame.display.init()
         width = pygame.display.Info().current_w
@@ -49,7 +49,7 @@ def get_height() -> int:
         int: The screen height.
     """
     height = HEIGHT
-    if Arguments().get_fullscreen():
+    if not Arguments().get_no_fullscreen():
         if not pygame.display.get_init():
             pygame.display.init()
         height = pygame.display.Info().current_h

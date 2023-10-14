@@ -7,6 +7,7 @@ Description: Command line argument parsing.
 """
 import argparse
 
+from source.logger import LoggerManager
 from source.product_name import LONG_NAME
 
 
@@ -37,12 +38,13 @@ class Arguments:
             add_help=True,
         )
 
-        # fullscreen argument
+        # dont start in fullscreen
         parser.add_argument(
             "-f",
-            "--fullscreen",
+            "--no-fullscreen",
             action="store_true",
-            help=f"Start the {LONG_NAME} in fullscreen mode",
+            help=f"Don't start the {LONG_NAME} in fullscreen mode",
+            default=False,
         )
 
         # dont launch program after patching
@@ -58,20 +60,22 @@ class Arguments:
         )
 
         args = parser.parse_args()
-
         return {
-            "fullscreen": args.fullscreen,
+            "no_fullscreen": args.no_fullscreen,
             "no_launch": args.no_launch,
         }
 
-    def get_fullscreen(self) -> bool:
+    def get_no_fullscreen(self) -> bool:
         """
         Get the fullscreen argument.
 
         Returns:
             bool: The fullscreen argument.
         """
-        return self.args["fullscreen"]
+        try:
+            return self.args["no_fullscreen"]
+        except KeyError:
+            return False
 
     def get_no_launch(self) -> bool:
         """
@@ -80,4 +84,7 @@ class Arguments:
         Returns:
             bool: The no launch argument.
         """
-        return self.args["no_launch"]
+        try:
+            return self.args["no_launch"]
+        except KeyError:
+            return False

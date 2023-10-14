@@ -22,7 +22,7 @@ def run():
     """Run the GUI."""
 
     # Initialize screen
-    if Arguments().get_fullscreen():
+    if not Arguments().get_no_fullscreen():
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     screen = pygame.display.set_mode(get_screen_size())
 

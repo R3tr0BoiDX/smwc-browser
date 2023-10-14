@@ -6,10 +6,9 @@ import pygame
 
 from source.gui.helper import draw_text, cut_string_to_width
 from source.gui.assets import COLOR_MINOR_NORMAL, FONT_LOG
-from source.gui.constants import LOGO_HEIGHT
 
 
-MAX_LENGTH = LOGO_HEIGHT // FONT_LOG.get_height()
+MAX_LENGTH = 96 // FONT_LOG.get_height()
 
 COLOR_WARN = (255, 207, 41)
 COLOR_ERROR = (214, 71, 24)

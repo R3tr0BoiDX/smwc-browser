@@ -7,8 +7,7 @@
             "request": "launch",
             "module": "source.main",
             "args": [
-                "-s",
-                "data/baserom.sfc",
+                "-f",
                 "-l"
             ],
             "console": "integratedTerminal",
@@ -20,8 +19,7 @@
             "request": "launch",
             "module": "source.main",
             "args": [
-                "-s",
-                "data/baserom.sfc",
+                "-f",
                 "-l"
             ],
             "console": "externalTerminal",
@@ -32,11 +30,6 @@
             "type": "python",
             "request": "launch",
             "module": "source.main",
-            "args": [
-                "-s",
-                "data/baserom.sfc",
-                "-f",
-            ],
             "console": "externalTerminal",
             "justMyCode": true
         },
