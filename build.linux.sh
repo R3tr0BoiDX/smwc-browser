@@ -20,4 +20,4 @@ cp -r media dist/
 
 # Zipping the dist folder
 echo "Zipping the dist folder..."
-zip -r dist.zip dist/
+zip -r dist.zip dist/smwc-browser.linux.amd64.zip

@@ -21,4 +21,4 @@ Copy-Item .\media .\dist\smwc-browser\media -Recurse
 
 # Zipping the dist folder
 Write-Host "Zipping the dist folder..."
-Compress-Archive -Path .\dist\ -DestinationPath .\dist\smwc-browser.zip
+Compress-Archive -Path .\dist\ -DestinationPath .\dist\smwc-browser.windows.amd64.zip
