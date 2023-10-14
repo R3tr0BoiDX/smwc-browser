@@ -10,6 +10,7 @@
 
 ## Urgent TODOs
 
+- linting (and a lil bit refactoring)
 - better gamepad support and scrolling
 - add support for multiple pages
 

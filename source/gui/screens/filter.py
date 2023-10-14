@@ -15,13 +15,13 @@ from source.gui.elements.base import GUIElement
 from source.gui.helper import draw_footer_button
 from source.product_name import LONG_NAME
 from source.smwc.entities import (
-    HackEntry,
+    Page,
     get_difficulty_names,
     index_to_difficulty,
     get_sort_by_names,
     index_to_sort_by,
 )
-from source.smwc.crawler import get_hacks
+from source.smwc.crawler import get_page
 
 WINDOW_TITLE = LONG_NAME + ": Search with filters"
 
@@ -84,7 +84,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
         )
 
 
-def search_hacks(menu: List[GUIElement]) -> List[HackEntry]:
+def search_hacks(menu: List[GUIElement]) -> Page:
     authors = menu[1].get_value()
     authors = authors.split(",") if authors else None
     authors = (
@@ -101,7 +101,7 @@ def search_hacks(menu: List[GUIElement]) -> List[HackEntry]:
     featured = items[menu[4].get_value()][1]
     sort_by = index_to_sort_by(menu[7].get_value())
 
-    return get_hacks(
+    return get_page(
         name=menu[0].get_value(),
         authors=authors,
         tags=tags,
@@ -120,7 +120,7 @@ def clear_filter(menu: List[GUIElement]):
             element.clear_value()
 
 
-def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, list], ScreenIntent]:
+def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, Page], ScreenIntent]:
     pygame.display.set_caption(WINDOW_TITLE)
     background = BackgroundDrawer(screen, assets.BACKGROUND_IMAGE)
 

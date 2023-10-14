@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Tuple
 import threading
 
 import pygame
@@ -10,7 +10,7 @@ from source.gui.constants import *  # pylint: disable=W0401,W0614  # noqa: F403
 from source.gui.elements import BackgroundDrawer
 from source.gui.helper import draw_text, draw_footer_button, get_colors
 from source.product_name import LONG_NAME
-from source.smwc.entities import HackEntry
+from source.smwc.entities import Page
 
 WINDOW_TITLE = LONG_NAME
 
@@ -253,7 +253,7 @@ def event_select_entry(hack_list: list, selected_entry: int):
     ).start()
 
 
-def run(screen: pygame.Surface, hacks: List[HackEntry]) -> ScreenIntent:
+def run(screen: pygame.Surface, page: Page) -> ScreenIntent:
     # Init window
     pygame.display.set_caption(LONG_NAME)
     background = BackgroundDrawer(screen, assets.BACKGROUND_IMAGE)
@@ -274,10 +274,10 @@ def run(screen: pygame.Surface, hacks: List[HackEntry]) -> ScreenIntent:
                     )
                 elif event.key == pygame.K_DOWN:
                     selected_entry, scroll_offset = event_selection_down(
-                        selected_entry, scroll_offset, len(hacks)
+                        selected_entry, scroll_offset, len(page.hacks)
                     )
                 elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
-                    event_select_entry(hacks, selected_entry)
+                    event_select_entry(page.hacks, selected_entry)
                 elif event.key == pygame.K_ESCAPE:
                     return ScreenIntent.EXIT
                 elif event.key == pygame.K_f:
@@ -290,16 +290,16 @@ def run(screen: pygame.Surface, hacks: List[HackEntry]) -> ScreenIntent:
                     )
                 elif event.value[1] == -1:  # D-pad down
                     selected_entry, scroll_offset = event_selection_down(
-                        selected_entry, scroll_offset, len(hacks)
+                        selected_entry, scroll_offset, len(page.hacks)
                     )
 
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:  # A button on the gamepad
-                    event_select_entry(hacks, selected_entry)
+                    event_select_entry(page.hacks, selected_entry)
                 if event.button == 1:  # B button on the gamepad
                     return ScreenIntent.FILTER
                 elif event.button == 7:  # Start button on the gamepad
                     return ScreenIntent.EXIT
 
         background.draw()
-        draw(screen, selected_entry, scroll_offset, hacks)
+        draw(screen, selected_entry, scroll_offset, page.hacks)

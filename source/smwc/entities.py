@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
+from typing import List
+
 
 class Difficulty(Enum):
     ANY = ("Any", None)  # Any difficulty allowed
@@ -51,6 +53,12 @@ class PageList:
 
     active_page: int
     pages: dict
+
+
+@dataclass
+class Page:
+    hacks: List[HackEntry]
+    page_list: PageList
 
 
 def difficulty_string_to_enum(value: str) -> Difficulty:

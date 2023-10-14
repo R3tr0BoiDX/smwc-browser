@@ -14,6 +14,7 @@ from source.smwc.entities import (
     SortBy,
     difficulty_string_to_enum,
     PageList,
+    Page,
 )
 
 BASE_URL = "https://www.smwcentral.net/?p=section&s=smwhacks"
@@ -23,7 +24,7 @@ YES_NO_DICT = {"yes": True, "no": False}
 DATETIME_PATTERN = "%Y-%m-%dT%H:%M:%S"
 
 
-def get_hacks(
+def get_page(
     url=BASE_URL,
     name: str = None,
     authors: List[str] = None,
@@ -34,7 +35,7 @@ def get_hacks(
     description: str = None,
     sort_by: SortBy = None,
     ascending: bool = None,
-) -> List[HackEntry]:
+) -> Page:
     # Get filter parameter string if any
     filter_params = params.form_filter_params(
         name, authors, tags, demo, featured, difficulty, description, sort_by, ascending
@@ -46,43 +47,53 @@ def get_hacks(
     # Get website data
     response = requests.get(url, timeout=TIMEOUT)
 
-    hacks = []
     if response.status_code == 200:
         # Soup up HTML response
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Navigate through HTML structure
-        list_content_div = soup.find("div", id="list-content")
-        if not list_content_div:
-            LoggerManager().logger.error(
-                "The div with id='list-content' was not found."
-            )
-        else:
-            table_entries = list_content_div.find("table")
+        # Get hacks from soup
+        hacks = get_hacks(soup)
 
-            if not table_entries:
-                LoggerManager().logger.error("Table with entries was not found.")
-            else:
-                tbody = table_entries.find("tbody")
+        # Get page list from soup
+        page_list = get_page_list(soup)
 
-                if not tbody:
-                    LoggerManager().logger.error("tbody not found in table.")
-                else:
-                    tr_entries = tbody.find_all("tr")
+        return Page(hacks, page_list)
 
-                    for tr_entry in tr_entries:
-                        # Extract and wrap information of table entry in a HackEntry object
-                        hacks.append(process_entry(tr_entry))
+    # else:
+    LoggerManager().logger.error(
+        "HTTP status code %s: Failed to get hacks from %s.",
+        response.status_code,
+        url,
+    )
+
+
+def get_hacks(soup: BeautifulSoup) -> List[HackEntry]:
+    hacks = []
+    # Navigate through HTML structure
+    list_content_div = soup.find("div", id="list-content")
+    if not list_content_div:
+        LoggerManager().logger.error("The div with id='list-content' was not found.")
     else:
-        LoggerManager().logger.error(
-            "HTTP status code %s: Failed to get hacks from %s.",
-            response.status_code,
-            url,
-        )
+        table_entries = list_content_div.find("table")
+
+        if not table_entries:
+            LoggerManager().logger.error("Table with entries was not found.")
+        else:
+            tbody = table_entries.find("tbody")
+
+            if not tbody:
+                LoggerManager().logger.error("tbody not found in table.")
+            else:
+                tr_entries = tbody.find_all("tr")
+
+                for tr_entry in tr_entries:
+                    # Extract and wrap information of table entry in a HackEntry object
+                    hacks.append(process_entry(tr_entry))
+
     return hacks
 
 
-def get_other_pages(soup: BeautifulSoup) -> PageList:
+def get_page_list(soup: BeautifulSoup) -> PageList:
     pages = {}
     active_page = 0
 
@@ -90,7 +101,9 @@ def get_other_pages(soup: BeautifulSoup) -> PageList:
     ul_element = soup.find("ul", {"class": "page-list"})
 
     if not ul_element:
-        LoggerManager().logger.error("The ul with class='page-list' was not found.")
+        LoggerManager().logger.debug(
+            "The ul with class='page-list' was not found. Page might have no other pages."
+        )
     else:
         # Collect all the li entries inside the ul element
         li_entries = ul_element.find_all("li")
@@ -122,7 +135,7 @@ def process_entry(table_entry):
     # Extract data from HTML
     name_and_link = td[0].find("a")
     name = name_and_link.get_text()
-    # link = name_and_link["href"]
+    # link = name_and_link["href"]  #  todo: for entry pages
     date = datetime.strptime(td[0].find("time")["datetime"], DATETIME_PATTERN)
     demo = yes_no_to_bool(td[1].get_text())
     featured = yes_no_to_bool(td[2].get_text())
