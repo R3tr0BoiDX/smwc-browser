@@ -3,10 +3,10 @@ from typing import Tuple
 import pygame
 
 import source.gui.assets as assets
-from source.gui.elements.gui_element import GUIElement, PADDING_BETWEEN_ELEMENTS
+from source.gui.elements import base
 
 
-class CarouselSelect(GUIElement):
+class CarouselSelect(base.GUIElement):
     def __init__(
         self,
         screen: pygame.Surface,
@@ -21,41 +21,20 @@ class CarouselSelect(GUIElement):
         self.selected_index = 0
 
     def draw(self, anchor: Tuple[int, int], selected: bool):
-        color = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
-        color_detail = (
-            assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+        label_rect = base.draw_label(self.screen, self.label, anchor, selected)
+        description_rect = base.draw_description(
+            self.screen, self.description, label_rect.bottomright, selected
         )
-
-        # Draw label
-        label_renderer = assets.FONT_MAJOR.render(self.label, True, color)
-        label_rect = label_renderer.get_rect(
-            topleft=(
-                anchor[0]
-                - (PADDING_BETWEEN_ELEMENTS // 2)
-                - label_renderer.get_width(),
-                anchor[1],
-            )
-        )
-        self.screen.blit(label_renderer, label_rect)
-
-        # Draw description underneath label
-        description_renderer = assets.FONT_MINOR.render(
-            self.description, True, color_detail
-        )
-        description_rect = description_renderer.get_rect(
-            right=label_rect.right, top=label_rect.bottom
-        )
-        self.screen.blit(description_renderer, description_rect)
 
         # Draw selected item
-        label_rect_origin = label_renderer.get_rect()
+        color = base.get_major_color(selected)
         selected_entry_renderer = assets.FONT_MAJOR.render(
             self.entries[self.selected_index], True, color
         )
         text_rect = selected_entry_renderer.get_rect(
             topleft=(
-                anchor[0] + (PADDING_BETWEEN_ELEMENTS // 2),
-                label_rect_origin.top + anchor[1],
+                anchor[0] + (base.PADDING_BETWEEN_ELEMENTS // 2),
+                anchor[1],
             )
         )
         self.screen.blit(selected_entry_renderer, text_rect)

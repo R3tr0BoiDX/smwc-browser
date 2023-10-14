@@ -1,21 +1,22 @@
 from typing import Tuple
+import time
 
 import pygame
 
 import source.gui.assets as assets
-from source.gui.elements.gui_element import GUIElement, PADDING_BETWEEN_ELEMENTS
+from source.gui.elements import base
 from source.gui.helper import cut_string_to_width
 
 SIZE = (256, 32)
 OFFSET_LEFT = 8
 
-BLINK_SPEED = 30
+BLINK_SPEED = 0.5  # seconds
 
 # Define a list of allowed keycodes for a-z, 0-9, and special characters
 ALLOWED_KEYCODES = list(range(32, 127))
 
 
-class Textfield(GUIElement):
+class Textfield(base.GUIElement):
     def __init__(
         self,
         screen: pygame.Surface,
@@ -27,67 +28,46 @@ class Textfield(GUIElement):
         self.description = description
         self.text = None
         self.cursor_visible = True
-        self.cursor_timer = 0
+        self.cursor_timer = time.time()
         self.shift_pressed = False  # Flag to track if the Shift key is pressed
 
     def draw(self, anchor: Tuple[int, int], selected: bool):
-        color = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
-        color_detail = (
-            assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+        label_rect = base.draw_label(self.screen, self.label, anchor, selected)
+        description_rect = base.draw_description(
+            self.screen, self.description, label_rect.bottomright, selected
         )
-
-        # Draw label
-        label_renderer = assets.FONT_MAJOR.render(self.label, True, color)
-        label_rect = label_renderer.get_rect(
-            topleft=(
-                anchor[0]
-                - (PADDING_BETWEEN_ELEMENTS // 2)
-                - label_renderer.get_width(),
-                anchor[1],
-            )
-        )
-        self.screen.blit(label_renderer, label_rect)
-
-        # Draw description underneath label
-        description_renderer = assets.FONT_MINOR.render(
-            self.description, True, color_detail
-        )
-        description_rect = description_renderer.get_rect(
-            right=label_rect.right, top=label_rect.bottom
-        )
-        self.screen.blit(description_renderer, description_rect)
 
         # Draw the textbox
-        label_rect_origin = label_renderer.get_rect()
         box_rect = pygame.Rect(
-            (PADDING_BETWEEN_ELEMENTS // 2) + anchor[0],
-            label_rect_origin.top + anchor[1],
+            (base.PADDING_BETWEEN_ELEMENTS // 2) + anchor[0],
+            label_rect.centery - label_rect.top - (SIZE[1] // 2) + anchor[1],
             SIZE[0],
             SIZE[1],
         )
+        color = base.get_major_color(selected)
         pygame.draw.rect(self.screen, color, box_rect, 2)
 
-        # Calculate the maximum number of characters that can fit in the textbox
+        # Draw the text in the textbox, ensuring it doesn't exceed the maximum length
         text = cut_string_to_width(
             self.text, assets.FONT_MAJOR, box_rect.width - OFFSET_LEFT
         )
-
-        # Draw the text in the textbox, ensuring it doesn't exceed the maximum length
         input_text = assets.FONT_MAJOR.render(text, True, color)
         input_rect = input_text.get_rect(
             topleft=(
-                box_rect.x + OFFSET_LEFT,
-                label_rect_origin.centery - (input_text.get_height() // 2) + anchor[1],
+                box_rect.left + OFFSET_LEFT,
+                box_rect.centery
+                - box_rect.top
+                - (input_text.get_height() // 2)
+                + anchor[1],
             )
         )
         self.screen.blit(input_text, input_rect)
 
         # Draw cursor
         if selected:
-            self.cursor_timer += 1
-            if self.cursor_timer >= BLINK_SPEED:
+            if time.time() - self.cursor_timer > BLINK_SPEED:
+                self.cursor_timer = time.time()
                 self.cursor_visible = not self.cursor_visible
-                self.cursor_timer = 0
 
             if self.cursor_visible:
                 cursor_x = input_rect.right + 2

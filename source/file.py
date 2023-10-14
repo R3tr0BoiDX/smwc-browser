@@ -2,7 +2,6 @@ import glob
 import os
 import subprocess
 import tempfile
-import time
 import zipfile
 from pathlib import Path
 import urllib.parse

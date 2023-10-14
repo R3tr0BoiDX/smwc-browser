@@ -2,13 +2,13 @@ from typing import Tuple
 
 import pygame
 
-import source.gui.assets as assets
-from source.gui.elements.gui_element import GUIElement, PADDING_BETWEEN_ELEMENTS
+from source.gui import assets
+from source.gui.elements import base
 
 SIZE = (24, 24)
 
 
-class Checkbox(GUIElement):
+class Checkbox(base.GUIElement):
     def __init__(
         self,
         screen: pygame.Surface,
@@ -22,43 +22,19 @@ class Checkbox(GUIElement):
         self.checked = False
 
     def draw(self, anchor: Tuple[int, int], selected: bool) -> pygame.Rect:
-        color_title = (
-            assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
-        )
-        color_detail = (
-            assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
-        )
-
-        # Draw label
-        label_renderer = assets.FONT_MAJOR.render(self.label, True, color_title)
-        label_rect = label_renderer.get_rect(
-            topleft=(
-                anchor[0]
-                - (PADDING_BETWEEN_ELEMENTS // 2)
-                - label_renderer.get_width(),
-                anchor[1],
-            )
-        )
-        self.screen.blit(label_renderer, label_rect)
-
-        # Draw description underneath label
-        description_renderer = assets.FONT_MINOR.render(
-            self.description, True, color_detail
-        )
-        description_rect = description_renderer.get_rect(
-            topright=(label_rect.right, label_rect.bottom)
-        )
-        self.screen.blit(description_renderer, description_rect)
+        label_rect = base.draw_label(self.screen, self.label, anchor, selected)
+        description_rect = base.draw_description(self.screen, self.description, label_rect.bottomright, selected)
 
         # Draw the checkbox
-        label_rect_origin = label_renderer.get_rect()
         self.rect = pygame.Rect(
-            (PADDING_BETWEEN_ELEMENTS // 2) + anchor[0],
-            label_rect_origin.centery - (SIZE[1] // 2) + anchor[1],
+            (base.PADDING_BETWEEN_ELEMENTS // 2) + anchor[0],
+            label_rect.centery - label_rect.top - (SIZE[1] // 2) + anchor[1],
             SIZE[0],
             SIZE[1],
         )
-        pygame.draw.rect(self.screen, color_title, self.rect, 2)
+
+        color = base.get_major_color(selected)
+        pygame.draw.rect(self.screen, color, self.rect, 2)
 
         # Draw checked mark if checked
         if self.checked:

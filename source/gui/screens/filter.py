@@ -11,7 +11,7 @@ from source.gui.elements import (
     RadioButton,
     Checkbox,
 )
-from source.gui.elements.gui_element import GUIElement
+from source.gui.elements.base import GUIElement
 from source.gui.helper import draw_footer_button
 from source.product_name import LONG_NAME
 from source.smwc.entry import (

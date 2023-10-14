@@ -34,7 +34,8 @@ class Arguments:
             dict: A dictionary of parsed arguments.
         """
         parser = argparse.ArgumentParser(
-            description=f"{LONG_NAME} command line arguments"
+            description=f"{LONG_NAME} command line arguments - R3tr0BoiDX (c) 2023",
+            add_help=True,
         )
 
         # argument for sfc path
@@ -51,7 +52,7 @@ class Arguments:
             "-f",
             "--fullscreen",
             action="store_true",
-            help=f"Start {LONG_NAME} in fullscreen mode",
+            help=f"Start the {LONG_NAME} in fullscreen mode",
         )
 
         # dont launch program after patching

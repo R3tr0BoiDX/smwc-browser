@@ -26,6 +26,8 @@
 
 This project entirely in my free time next to my full time job. Soon, ill write my bachelor thesis and will have much less time for this project. So, if you wanna contribute and help with any feature, you're welcome! We need tests, bug fixes and new features would be nice as well. I much appreciate your consideration! :slightly_smiling_face:
 
+Constructive criticism and ideas for improvements are also always welcome!
+
 ## Future ideas
 
 (in order of importance)
