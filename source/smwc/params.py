@@ -1,6 +1,6 @@
 from typing import List
 
-from source.smwc.entry import Difficulty, SortBy
+from source.smwc.entities import Difficulty, SortBy
 
 
 def form_filter_params(

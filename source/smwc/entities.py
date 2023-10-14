@@ -45,6 +45,14 @@ class HackEntry:
     download_url: str
 
 
+@dataclass
+class PageList:
+    """This represent a page list for other pages on SMW Central."""
+
+    active_page: int
+    pages: dict
+
+
 def difficulty_string_to_enum(value: str) -> Difficulty:
     for difficulty_enum in Difficulty:
         if difficulty_enum.value[0] == value:

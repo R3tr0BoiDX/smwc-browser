@@ -3,6 +3,8 @@ import math
 
 import pygame
 
+from source.gui import assets
+
 
 def cut_string_to_width(
     text: str, font: pygame.font.Font, width: int, cut_right: bool = False
@@ -26,6 +28,21 @@ def cut_string_to_width(
 def draw_text(
     screen: pygame.Surface, text: str, font: pygame.font.Font, color: tuple, pos: tuple
 ) -> pygame.Rect:
+    """
+    Draws text on the screen and returns the rect of the text.
+
+    Args:
+        screen (pygame.Surface): The screen to draw on.
+        text (str): The text to draw.
+        font (pygame.font.Font): The font to use.
+        color (tuple): The color of the text.
+        pos (tuple): The position of the text.
+
+    Returns:
+        pygame.Rect: The rect of the text.
+
+    TODO: Reconsider this function. It is not very useful.
+    """
     text_rendered = font.render(text, True, color)
     text_rect = text_rendered.get_rect(topleft=pos)
     screen.blit(text_rendered, text_rect)
@@ -98,3 +115,17 @@ def draw_footer_button(
     )
 
     return button_rect.unionall([slash_rect, key_rect, text_rect])
+
+
+def get_major_color(selected: bool):
+    color_major = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
+    return color_major
+
+
+def get_minor_color(selected: bool):
+    color_minor = assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
+    return color_minor
+
+
+def get_colors(selected: bool):
+    return get_major_color(selected), get_minor_color(selected)

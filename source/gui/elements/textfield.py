@@ -5,7 +5,7 @@ import pygame
 
 import source.gui.assets as assets
 from source.gui.elements import base
-from source.gui.helper import cut_string_to_width
+from source.gui.helper import cut_string_to_width, get_major_color
 
 SIZE = (256, 32)
 OFFSET_LEFT = 8
@@ -44,7 +44,7 @@ class Textfield(base.GUIElement):
             SIZE[0],
             SIZE[1],
         )
-        color = base.get_major_color(selected)
+        color = get_major_color(selected)
         pygame.draw.rect(self.screen, color, box_rect, 2)
 
         # Draw the text in the textbox, ensuring it doesn't exceed the maximum length

@@ -3,11 +3,10 @@ from typing import Tuple
 
 import pygame
 
-import source.gui.assets as assets
+from source.gui import assets
+from source.gui.helper import get_minor_color
 
 PADDING_BETWEEN_ELEMENTS = 24
-
-# todo: extract draw label and description to here
 
 
 class GUIElement(ABC):
@@ -32,32 +31,21 @@ class GUIElement(ABC):
         pass
 
 
-def get_major_color(selected: bool):
-    color_major = assets.COLOR_MAJOR_SELECTED if selected else assets.COLOR_MAJOR_NORMAL
-    return color_major
-
-
-def get_minor_color(selected: bool):
-    color_minor = assets.COLOR_MINOR_SELECTED if selected else assets.COLOR_MINOR_NORMAL
-    return color_minor
-
-
 def draw_label(
     screen: pygame.Surface, label: str, anchor: Tuple[int, int], selected: bool
 ) -> pygame.Rect:
-    color = get_major_color(selected)
+    color = get_minor_color(selected)
 
     # Draw label
     label_renderer = assets.FONT_MAJOR.render(label, True, color)
-    label_rect = label_renderer.get_rect(
-        topleft=(
-            anchor[0] - (PADDING_BETWEEN_ELEMENTS // 2) - label_renderer.get_width(),
-            anchor[1],
-        )
+    pos = (
+        anchor[0] - (PADDING_BETWEEN_ELEMENTS // 2) - label_renderer.get_width(),
+        anchor[1],
     )
-    screen.blit(label_renderer, label_rect)
+    text_rect = label_renderer.get_rect(topleft=pos)
+    screen.blit(label_renderer, text_rect)
 
-    return label_rect
+    return text_rect
 
 
 def draw_description(

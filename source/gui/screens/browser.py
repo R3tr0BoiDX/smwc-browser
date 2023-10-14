@@ -8,10 +8,9 @@ from source import file
 from source.logger import LoggerManager
 from source.gui.constants import *  # pylint: disable=W0401,W0614  # noqa: F403
 from source.gui.elements import BackgroundDrawer
-from source.gui.helper import draw_text, draw_footer_button
+from source.gui.helper import draw_text, draw_footer_button, get_colors
 from source.product_name import LONG_NAME
-from source.smwc.entry import HackEntry
-
+from source.smwc.entities import HackEntry
 
 WINDOW_TITLE = LONG_NAME
 
@@ -29,7 +28,7 @@ CURSOR_OFFSET = (SEPARATOR_OFFSET, 16)  # x, y
 SELECTION_INDENT = 16
 
 # Menu
-MENU_HEIGHT = HEIGHT - HEADER_TOTAL - FOOTER_HEIGHT
+MENU_HEIGHT = get_height() - HEADER_TOTAL - FOOTER_HEIGHT
 MENU_ENTRY_HEIGHT = 96  # px
 
 # Check box
@@ -40,19 +39,9 @@ CHECKBOX_FEATURED_OFFSET = CHECKBOX_DEMO_OFFSET + 48  # x
 # Text
 TEXT_OFFSET = CHECKBOX_FEATURED_OFFSET + 48  # x
 NAME_OFFSET = 16  # y
-AUTHOR_OFFSET = 8  # x
-DIFFICULTY_OFFSET = NAME_OFFSET + 32  # y
-DETAIL_OFFSET = DIFFICULTY_OFFSET + 24  # y
+AUTHOR_OFFSET = (8, 8)
 
 NO_HACKS_FOUND_MESSAGE = "No hacks found!"
-
-
-def draw_checkbox(
-    screen: pygame.Surface, state: bool, entry_y_pos: int, offset_x: int
-) -> None:
-    image = assets.CHECKBOX_ON_IMAGE if state else assets.CHECKBOX_OFF_IMAGE
-    offset_y = entry_y_pos + CHECKBOX_OFFSET
-    screen.blit(image, (offset_x, offset_y))
 
 
 def draw_header(screen: pygame.Surface, hacks_found: bool):
@@ -125,43 +114,36 @@ def draw_hack_list(
         is_selected = i == selected_entry
         entry_y = HEADER_TOTAL + (i - scroll_offset) * MENU_ENTRY_HEIGHT
         indent = SELECTION_INDENT if is_selected else 0
+        color_major, color_minor = get_colors(is_selected)
 
         # name
-        draw_text(
+        name_rect = draw_text(
             screen,
             entry.name,
             assets.FONT_MAJOR,
-            assets.COLOR_MAJOR_NORMAL
-            if not is_selected
-            else assets.COLOR_MAJOR_SELECTED,
+            color_major,
             (TEXT_OFFSET + indent, entry_y + NAME_OFFSET),
         )
 
         # author
-        name_text_width, _ = assets.FONT_MAJOR.size(entry.name)
         draw_text(
             screen,
             f"by {entry.author}",
             assets.FONT_MINOR,
-            assets.COLOR_MAJOR_NORMAL
-            if not is_selected
-            else assets.COLOR_MAJOR_SELECTED,
+            color_major,
             (
-                name_text_width + TEXT_OFFSET + AUTHOR_OFFSET + indent,
-                entry_y + NAME_OFFSET + 8,
-            )
-            # todo: replace 8 with actual calculated value, so title and line form one line
+                name_rect.right + AUTHOR_OFFSET[0],
+                name_rect.top + AUTHOR_OFFSET[1],
+            ),
         )
 
         # difficulty
-        draw_text(
+        difficulty_rect = draw_text(
             screen,
             f"{entry.difficulty.value[0]}: {entry.length} {'exit' if entry.length == 1 else 'exits'}",
             assets.FONT_MINOR,
-            assets.COLOR_MINOR_NORMAL
-            if not is_selected
-            else assets.COLOR_MINOR_SELECTED,
-            (TEXT_OFFSET + indent, entry_y + DIFFICULTY_OFFSET),
+            color_minor,
+            (name_rect.left, name_rect.bottom),
         )
 
         # details
@@ -172,12 +154,11 @@ def draw_hack_list(
                 f"{entry.download_count} downloads | {entry.date.strftime('%c')} | {entry.size}"
             ),
             assets.FONT_MINOR,
-            assets.COLOR_MINOR_NORMAL
-            if not is_selected
-            else assets.COLOR_MINOR_SELECTED,
-            (TEXT_OFFSET + indent, entry_y + DETAIL_OFFSET),
+            color_minor,
+            (difficulty_rect.left, difficulty_rect.bottom),
         )
 
+        # todo: redo this
         draw_checkbox(screen, entry.demo, entry_y, CHECKBOX_DEMO_OFFSET + indent)
         draw_checkbox(
             screen, entry.featured, entry_y, CHECKBOX_FEATURED_OFFSET + indent
@@ -189,6 +170,14 @@ def draw_hack_list(
 
         # Draw a white separator line between entries
         draw_separator(screen, entry_y)
+
+
+def draw_checkbox(
+    screen: pygame.Surface, state: bool, entry_y_pos: int, offset_x: int
+) -> None:
+    image = assets.CHECKBOX_ON_IMAGE if state else assets.CHECKBOX_OFF_IMAGE
+    offset_y = entry_y_pos + CHECKBOX_OFFSET
+    screen.blit(image, (offset_x, offset_y))
 
 
 def draw_cursor(screen: pygame.Surface, entry_y: int, indent: int):

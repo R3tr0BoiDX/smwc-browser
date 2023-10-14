@@ -2,7 +2,7 @@ import pygame
 
 from source.arguments import Arguments
 from source.gui import assets
-from source.gui.constants import HEIGHT, WIDTH, ScreenIntent
+from source.gui.constants import ScreenIntent, get_screen_size
 from source.gui.screens import browser as browser_screen
 from source.gui.screens import filter as filter_screen
 from source.smwc.crawler import get_hacks
@@ -17,8 +17,6 @@ _ = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 # Set window icon
 pygame.display.set_icon(assets.ICON_IMAGE)
 
-# todo: universally use helper.draw_text()
-
 
 def run():
     """Run the GUI."""
@@ -26,7 +24,7 @@ def run():
     # Initialize screen
     if Arguments().get_fullscreen():
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen = pygame.display.set_mode(get_screen_size())
 
     hacks = get_hacks()
     running = True

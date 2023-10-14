@@ -8,8 +8,13 @@ from bs4 import BeautifulSoup
 
 from source.smwc import params
 from source.logger import LoggerManager
-from source.smwc.entry import (Difficulty, HackEntry, SortBy,
-                               difficulty_string_to_enum)
+from source.smwc.entities import (
+    Difficulty,
+    HackEntry,
+    SortBy,
+    difficulty_string_to_enum,
+    PageList,
+)
 
 BASE_URL = "https://www.smwcentral.net/?p=section&s=smwhacks"
 TIMEOUT = 10  # sec
@@ -77,11 +82,47 @@ def get_hacks(
     return hacks
 
 
+def get_other_pages(soup: BeautifulSoup) -> PageList:
+    pages = {}
+    active_page = 0
+
+    # Navigate through HTML structure
+    ul_element = soup.find("ul", {"class": "page-list"})
+
+    if not ul_element:
+        LoggerManager().logger.error("The ul with class='page-list' was not found.")
+    else:
+        # Collect all the li entries inside the ul element
+        li_entries = ul_element.find_all("li")
+
+        for li_entry in li_entries:
+            # Get the active page number
+            if "active" in li_entry.get("class", []):
+                active_page = int(li_entry.text)
+                continue
+            elif "title" in li_entry.get("class", []):
+                # Skip the entry with the 'title' class
+                continue
+            elif li_entry.select_one("select"):
+                # Skip the entry with a child select tag
+                continue
+            else:
+                # Get the a element inside the element
+                a_element = li_entry.find("a")
+                href = a_element["href"]
+                page_number = int(a_element.text)
+                pages[page_number] = href
+
+    return PageList(active_page, pages)
+
+
 def process_entry(table_entry):
     td = table_entry.find_all("td")
 
     # Extract data from HTML
-    name = td[0].find("a").get_text()
+    name_and_link = td[0].find("a")
+    name = name_and_link.get_text()
+    # link = name_and_link["href"]
     date = datetime.strptime(td[0].find("time")["datetime"], DATETIME_PATTERN)
     demo = yes_no_to_bool(td[1].get_text())
     featured = yes_no_to_bool(td[2].get_text())

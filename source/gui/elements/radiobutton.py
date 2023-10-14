@@ -4,7 +4,7 @@ import pygame
 
 from source.gui import assets
 from source.gui.elements import base
-from source.gui.helper import draw_text
+from source.gui.helper import draw_text, get_colors
 
 RADIUS = 12
 RADIUS_FILL = 7
@@ -36,8 +36,7 @@ class RadioButton(base.GUIElement):
         all_rect = label_rect.union(description_rect)
         for index, value in enumerate(self.values):
             option_selected = index == self.selected_index
-            color_major = base.get_major_color(option_selected)
-            color_minor = base.get_minor_color(option_selected)
+            color_major, color_minor = get_colors(option_selected)
 
             # Draw the circle
             pos = (

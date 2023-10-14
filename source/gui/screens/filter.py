@@ -14,7 +14,7 @@ from source.gui.elements import (
 from source.gui.elements.base import GUIElement
 from source.gui.helper import draw_footer_button
 from source.product_name import LONG_NAME
-from source.smwc.entry import (
+from source.smwc.entities import (
     HackEntry,
     get_difficulty_names,
     index_to_difficulty,

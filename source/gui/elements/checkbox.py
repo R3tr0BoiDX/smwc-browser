@@ -4,6 +4,7 @@ import pygame
 
 from source.gui import assets
 from source.gui.elements import base
+from source.gui.helper import get_major_color
 
 SIZE = (24, 24)
 
@@ -33,7 +34,7 @@ class Checkbox(base.GUIElement):
             SIZE[1],
         )
 
-        color = base.get_major_color(selected)
+        color = get_major_color(selected)
         pygame.draw.rect(self.screen, color, self.rect, 2)
 
         # Draw checked mark if checked

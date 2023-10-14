@@ -4,6 +4,7 @@ import pygame
 
 import source.gui.assets as assets
 from source.gui.elements import base
+from source.gui.helper import get_major_color
 
 
 class CarouselSelect(base.GUIElement):
@@ -27,7 +28,7 @@ class CarouselSelect(base.GUIElement):
         )
 
         # Draw selected item
-        color = base.get_major_color(selected)
+        color = get_major_color(selected)
         selected_entry_renderer = assets.FONT_MAJOR.render(
             self.entries[self.selected_index], True, color
         )
