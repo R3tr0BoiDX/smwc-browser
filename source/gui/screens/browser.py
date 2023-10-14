@@ -92,7 +92,7 @@ def draw_footer(screen: pygame.Surface):
     apply_rect = draw_footer_button(
         screen,
         " Download and apply",
-        assets.BUTTON_A_IMAGE,
+        assets.BUTTON_B_IMAGE,
         assets.KEY_RETURN_IMAGE,
         assets.FONT_MINOR,
         (FOOTER_OFFSET[0], footer_y),
@@ -103,7 +103,7 @@ def draw_footer(screen: pygame.Surface):
     filter_rect = draw_footer_button(
         screen,
         " Search with filter",
-        assets.BUTTON_B_IMAGE,
+        assets.BUTTON_Y_IMAGE,
         assets.KEY_F_IMAGE,
         assets.FONT_MINOR,
         (apply_rect.right + FOOTER_BUTTONS_PADDING, footer_y),
@@ -342,9 +342,9 @@ def run(
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:  # A button on the gamepad
                     event_select_entry(page.hacks, selected_entry)
-                if event.button == 1:  # B button on the gamepad
+                if event.button == 2:  # X button on the gamepad
                     return ScreenIntent.FILTER
-                elif event.button == 7:  # Start button on the gamepad
+                if event.button in [6, 7]:  # Start button on the gamepad
                     return ScreenIntent.EXIT
 
         background.draw()

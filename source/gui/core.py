@@ -33,7 +33,7 @@ def run():
     while running:
         if intent == ScreenIntent.BROWSER:
             result = browser_screen.run(screen, page)
-            
+
             if isinstance(result, tuple):
                 intent, page = result
             else:

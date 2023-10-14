@@ -44,7 +44,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
     back_rect = draw_footer_button(
         screen,
         ": Back",
-        assets.BUTTON_B_IMAGE,
+        assets.BUTTON_A_IMAGE,
         assets.KEY_ESC_IMAGE,
         assets.FONT_MINOR,
         (FOOTER_OFFSET[0], footer_y),
@@ -76,7 +76,7 @@ def draw_footer(screen: pygame.Surface, space: bool):
         draw_footer_button(
             screen,
             ": Toggle",
-            assets.BUTTON_A_IMAGE,
+            assets.BUTTON_B_IMAGE,
             assets.KEY_SPACE_IMAGE,
             assets.FONT_MINOR,
             (clear_react.right + FOOTER_BUTTONS_PADDING, footer_y),
@@ -177,9 +177,9 @@ def run(screen: pygame.Surface) -> Union[Tuple[ScreenIntent, Page], ScreenIntent
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 1:  # B button on the gamepad
                     return ScreenIntent.BROWSER
-                elif event.button == 2:  # X button on the gamepad
+                if event.button == 3:  # X button on the gamepad
                     clear_filter(menu)
-                elif event.button == 3:  # Y button on the gamepad
+                if event.button == 2:  # Y button on the gamepad
                     return ScreenIntent.BROWSER, search_hacks(menu)
 
             menu[selected_option].active(event)

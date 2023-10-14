@@ -24,7 +24,9 @@ class Checkbox(base.GUIElement):
 
     def draw(self, anchor: Tuple[int, int], selected: bool) -> pygame.Rect:
         label_rect = base.draw_label(self.screen, self.label, anchor, selected)
-        description_rect = base.draw_description(self.screen, self.description, label_rect.bottomright, selected)
+        description_rect = base.draw_description(
+            self.screen, self.description, label_rect.bottomright, selected
+        )
 
         # Draw the checkbox
         self.rect = pygame.Rect(

@@ -218,6 +218,6 @@ def run_patched_file(file_path: Path):
     LoggerManager().logger.info("Trying to run ' %s %s'", program, file_path)
     try:
         subprocess.run([program, file_path], check=True)
-        LoggerManager().logger.info("Launched program exited")
+        LoggerManager().logger.info("Launched program has closed")
     except subprocess.CalledProcessError as error:
         LoggerManager().logger.error(error)
