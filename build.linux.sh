@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# May need to install apt install python3-venv
+
 # Create a virtual environment
 echo "Creating a virtual environment..."
 python3 -m venv .venv
@@ -20,4 +22,5 @@ cp -r media dist/
 
 # Zipping the dist folder
 echo "Zipping the dist folder..."
-zip -r dist.zip dist/smwc-browser.linux.amd64.zip
+zip -r dist/smwc-browser.linux.amd64.zip dist/
+

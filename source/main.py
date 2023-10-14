@@ -9,8 +9,8 @@ from source.gui import core
 
 SMW_CRC32 = "B19ED489"
 
-LOG_LEVEL = logging.DEBUG
 
+logging.basicConfig(level=logger.DEFAULT_LOG_LEVEL)
 logger.LoggerManager()  # init logger
 config.Config()  # init config
 arguments.Arguments()  # init arguments
@@ -18,7 +18,6 @@ arguments.Arguments()  # init arguments
 
 def main():
     """Main entry point for the application."""
-    logging.basicConfig(level=LOG_LEVEL)
     conf = config.Config()
 
     if conf.get_sfc_path() is None:
