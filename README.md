@@ -1,8 +1,7 @@
 # SMW Central Browser
 
 <div style="text-align:center">
-
-  ![SMW Central Browser Logo](media/images/logo.png)
+  <img src="media/images/logo.png" alt="SMW Central Browser Logo">
 </div>
 
 - [SMW Central Browser](#smw-central-browser)
@@ -32,14 +31,11 @@ This project was mainly created with the Steam Deck in mind, but should work on 
 
 ## Screenshots
 
-<div style="text-align:center">
+**SMW Central Browser main screen**
+![SMW Central Browser main screen](.github/user/screen_main.png)
 
-  **SMW Central Browser main screen**
-  ![SMW Central Browser main screen](.github/user/screen_main.png)
-
-  **SMW Central Browser filter screen**
-  ![SMW Central Browser filter screen](.github/user/screen_filter.png)
-</div>
+**SMW Central Browser filter screen**
+![SMW Central Browser filter screen](.github/user/screen_filter.png)
 
 ## Install
 
@@ -49,7 +45,11 @@ There are two way for you to install this. You can download precompiled binaries
 
 You can get the [latest precompiled binaries](https://github.com/R3tr0BoiDX/smwc-browser/releases/latest) from the releases section. Just download them and execute them! It's nearly that easy!
 
-[<img alt="Download" src=".github/user/download_button.png" />](https://github.com/R3tr0BoiDX/smwc-browser/releases/latest)
+<div style="text-align: center;">
+  <a href="https://github.com/R3tr0BoiDX/smwc-browser/releases/latest">
+    <img src=".github/user/download_button.png" alt="Download">
+  </a>
+</div>
 
 ### Run from source
 
