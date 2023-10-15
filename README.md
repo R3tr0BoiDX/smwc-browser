@@ -13,6 +13,7 @@
   - [Urgent TODOs](#urgent-todos)
   - [Wanna help?](#wanna-help)
   - [Other SMW (US) checksums](#other-smw-us-checksums)
+  - [Credits](#credits)
   - [FAQ](#faq)
 
 ## What is this?
@@ -118,6 +119,10 @@ If you would rather use a different checksums, below are alternative SMW (US) ch
 - **SHA256**: `0838E531FE22C077528FEBE14CB3FF7C492F1F5FA8DE354192BDFF7137C27F5B`
 - **MD5**: `CDD3C8C37322978CA8669B34BC89C804`
 - **CRC32**: `B19ED489`
+
+## Credits
+
+This project was based on [adamzwakk's](https://github.com/adamzwakk) alias [Adam Zwakenberg's](https://www.adamzwakk.com/) [smwc-interface](https://github.com/adamzwakk/smwc-interface), but very fast it divergent heavily from his source code. By now, none of it is left, yet, it's what started this.
 
 ## FAQ
 
