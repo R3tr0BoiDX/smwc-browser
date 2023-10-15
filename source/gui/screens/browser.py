@@ -310,6 +310,19 @@ def run(
                     selected_entry, scroll_offset = event_selection_down(
                         selected_entry, scroll_offset, len(page.hacks)
                     )
+                elif event.key == pygame.K_RIGHT:
+                    next_page = event_next_page(page)
+                    if next_page:
+                        page = next_page
+                        selected_entry = 0
+                        scroll_offset = 0
+                elif event.key == pygame.K_LEFT:
+                    previous_page = event_previous_page(page)
+                    if previous_page:
+                        page = previous_page
+                        selected_entry = 0
+                        scroll_offset = 0
+
                 elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                     event_select_entry(page.hacks, selected_entry)
                 elif event.key == pygame.K_ESCAPE:
