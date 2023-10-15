@@ -1,8 +1,8 @@
 # SMW Central Browser
 
-<div style="text-align:center">
+<p align="center">
   <img src="media/images/logo.png" alt="SMW Central Browser Logo">
-</div>
+</p>
 
 - [SMW Central Browser](#smw-central-browser)
   - [What is this?](#what-is-this)
@@ -45,11 +45,11 @@ There are two way for you to install this. You can download precompiled binaries
 
 You can get the [latest precompiled binaries](https://github.com/R3tr0BoiDX/smwc-browser/releases/latest) from the releases section. Just download them and execute them! It's nearly that easy!
 
-<div style="text-align: center;">
+<p align="center">
   <a href="https://github.com/R3tr0BoiDX/smwc-browser/releases/latest">
     <img src=".github/user/download_button.png" alt="Download">
   </a>
-</div>
+</p>
 
 ### Run from source
 
