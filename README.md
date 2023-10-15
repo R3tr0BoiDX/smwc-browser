@@ -7,6 +7,7 @@
   - [Install](#install)
     - [Precompiled binaries](#precompiled-binaries)
     - [Run from source](#run-from-source)
+    - [Build from source](#build-from-source)
   - [Setup the `config.json`](#setup-the-configjson)
   - [Command line arguments](#command-line-arguments)
   - [Future ideas](#future-ideas)
@@ -56,6 +57,10 @@ python3 -m source.main
 ```
 
 > :warning: These instructions are intended for Linux-based systems. If you're using Windows, you can achieve similar results with PowerShell. You cannot use the `apt` command, so you'll need to manually [install Python](https://www.python.org/downloads/windows/) and change the `source.venv/bin/activate` command with `.\.venv\Scripts\Activate.ps1`.
+
+### Build from source
+
+If you want to take this even further and compile your own executable, you can either run the appropriate build script ([`build.linux.sh`](build.linux.sh) or [`build.windows.ps1`](build.windows.ps1)) or you follow their instructions on your own.
 
 ## Setup the `config.json`
 

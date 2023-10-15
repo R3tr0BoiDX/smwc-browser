@@ -3,3 +3,4 @@ deptry
 flake8
 mypy
 pyinstaller
+cx_Freeze
