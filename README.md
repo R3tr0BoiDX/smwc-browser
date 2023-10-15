@@ -114,16 +114,20 @@ This project entirely in my free time next to my full time job. Soon, ill write 
 
 If you would rather use a different checksums, below are alternative SMW (US) checksums. If your ROM matches these, it should also pass the CRC32 check.
 
-- SHA-1: `6B47BB75D16514B6A476AA0C73A683A2A4C18765`
-- SHA256: `0838E531FE22C077528FEBE14CB3FF7C492F1F5FA8DE354192BDFF7137C27F5B`
-- MD5: `CDD3C8C37322978CA8669B34BC89C804`
-- CRC32: `B19ED489`
+- **SHA-1**: `6B47BB75D16514B6A476AA0C73A683A2A4C18765`
+- **SHA256**: `0838E531FE22C077528FEBE14CB3FF7C492F1F5FA8DE354192BDFF7137C27F5B`
+- **MD5**: `CDD3C8C37322978CA8669B34BC89C804`
+- **CRC32**: `B19ED489`
 
 ## FAQ
 
 **Will there be support for SMW2:YI and SM64?**
 
 Maybe one day! It's certainly a nice idea and in theory not to hard to implement.
+
+**Why CRC32?**
+
+Because it's fast.
 
 **I can't find my question!**
 
