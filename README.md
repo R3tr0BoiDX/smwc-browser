@@ -49,7 +49,7 @@ There are two way for you to install this. You can download precompiled binaries
 
 You can get the [latest precompiled binaries](https://github.com/R3tr0BoiDX/smwc-browser/releases/latest) from the releases section. Just download them and execute them! It's nearly that easy!
 
-[![Download](.github/user/download_button.png)]([URL_TO_LINK](https://github.com/R3tr0BoiDX/smwc-browser/releases/latest))
+[<img alt="Download" src=".github/user/download_button.png" />](https://github.com/R3tr0BoiDX/smwc-browser/releases/latest)
 
 ### Run from source
 
