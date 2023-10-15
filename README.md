@@ -23,9 +23,9 @@
 
 ## What is this?
 
-Depending on your perspective, this can be several. Mostly, its a handy tool to browser and search for [SMW hacks](https://www.smwcentral.net/?p=section&s=smwhacks) on [SMW Central](https://www.smwcentral.net/). This tool allows you to browse through all SMW hacks submissions, search with specific filters, lets you download and patch your SMW SFC file and launches the patched ROM with your favorite emulator!
+Depending on your perspective, this can be several. Mostly, it's a handy tool to browser and search for [SMW hacks](https://www.smwcentral.net/?p=section&s=smwhacks) on [SMW Central](https://www.smwcentral.net/). This tool allows you to browse through all SMW hacks submissions, search with specific filters, lets you download and patch your SMW SFC file and launches the patched ROM with your favorite emulator!
 
-From another perspective, a part of this project is a crawler (for the submession table-like pages as of right now), which allows you to interact with the submessions on a more developer friendly way. Maybe you want to build your own browser, then you might want to check out [this subfolder](source/smwc)!
+From another perspective, a part of this project is a crawler (for the submission table-like pages as of right now), which allows you to interact with the submissions in a more developer friendly way. Maybe you want to build your own browser, then you might want to check out [this subfolder](source/smwc)!
 
 This project was mainly created with the Steam Deck in mind, but should work on any platform, that supports Python!
 
@@ -39,7 +39,7 @@ This project was mainly created with the Steam Deck in mind, but should work on 
 
 ## Install
 
-There are two way for you to install this. You can download precompiled binaries or clone this repo and run it from the source code!
+There are two ways for you to install this. You can download precompiled binaries or clone this repo and run it from the source code!
 
 ### Precompiled binaries
 
@@ -80,9 +80,9 @@ python3 -m source.main
 
 If you want to take this even further and compile your own executable, you can either run the appropriate build script ([`build.linux.sh`](build.linux.sh) or [`build.windows.ps1`](build.windows.ps1)) or you follow their instructions on your own.
 
-## Setup the `config.json`
+## Set up the `config.json`
 
-No matter if you run from source or you prefer the precompiled binaries, both come with the [`config.example.json`](https://github.com/R3tr0BoiDX/smwc-browser/blob/master/config.example.json). You will need to **rename** this to `config.json` and fill out all the entries. It will look something like this:
+No matter if you run from source, or you prefer the precompiled binaries, both come with the [`config.example.json`](https://github.com/R3tr0BoiDX/smwc-browser/blob/master/config.example.json). You will need to **rename** this to `config.json` and fill out all the entries. It will look something like this:
 
 ```json
 {
@@ -95,14 +95,14 @@ No matter if you run from source or you prefer the precompiled binaries, both co
 Let's take a look at all the entries:
 
 - **`sfc_path`**: This is the path to find your SMW (US) SFC file. It **must** have a CRC32 code of `B19ED489`, or else you have the incorrect ROM and the SMW Central Browser won't launch. A built-in checksum test verifies if you have the right ROM. Different checksums are listed [below](#other-smw-us-checksums).
-- **`library_path`**: This is where the patched ROMs files will be saved. If you use RetroArch or a similar program and want the patched games to show up in your collection, this is for you!
+- **`library_path`**: This is where the patched ROM files will be saved. If you use RetroArch or a similar program and want the patched games to show up in your collection, this is for you!
 - **`launch_program`**, optional: After the ROMs have been patched, you can open them automatically with a program of your choice, allowing you to play right away! If you remove this key from the config file, no program will launch after patching.
 
 > :warning: Windows handles its paths differently than Linux, and you will need to escape your paths! They will look something like this: `"sfc_path": "C:\\Users\\User\\Games\\baserom.us.sfc`
 
 ## Command line arguments
 
-There aren't many command line arguments, but there a some. Right now there are:
+There aren't many command line arguments, but there a some. Right now, there are:
 
 - **`-l`, `--no-launch`**: Don't launch the patched file using the program defined in the configuration file once patching is complete. If no program is defined, no program will be launched anyway.
 - **`-f`, `--no-fullscreen`**: Don't start the browser in fullscreen mode.
@@ -155,11 +155,11 @@ If you would rather compare your SFC with a different checksum, below are altern
 
 **I found a bug! Where can I report it?**
 
-Please [open a new issue](https://github.com/R3tr0BoiDX/smwc-browser/issues/new) and provide as much information about the issue as you can. Preferable the stack trace when Python crashed.
+Please [open a new issue](https://github.com/R3tr0BoiDX/smwc-browser/issues/new) and provide as much information about the issue as you can. Preferable, the stack trace when Python crashed.
 
 **Will there be support for SMW2:YI and SM64?**
 
-Maybe one day! It's certainly a nice idea and in theory not to hard to implement.
+Maybe one day! It's certainly a charming idea and in theory not too hard to implement.
 
 **Why CRC32?**
 
@@ -167,7 +167,7 @@ Because it's fast.
 
 **Will this break when they change SMW Central?**
 
-Depends, but very likely. If they just change the style, there should be no issue, and while its a little bit adaptive, the margin for error if they should change the HTML structure is very small. But it hasn't really changed in a looong while, so fingers crossed!
+Depends, but very likely. If they just change the style, there should be no issue, and while it's a bit adaptive, the margin for error if they should change the HTML structure is very small. But it hasn't really changed in a looong while, so fingers crossed!
 
 **I can't find my question!**
 
