@@ -1,0 +1,52 @@
+[img]https://raw.githubusercontent.com/R3tr0BoiDX/smwc-browser/master/media/images/logo.png?raw=true[/img]
+
+[size=24]SMW Central Browser[/size]
+
+Hey! Thanks for stopping by! Today, I bring you the SMW Central Browser! 
+
+[size=16]What is this?[/size]
+
+Depending on your perspective, this can be several. Mostly, it's a handy tool to browser and search for SMW hacks on SMW Central. This tool allows you to browse through all SMW hacks submissions, search with specific filters, lets you download and patch your SMW SFC file and launches the patched ROM with your favorite emulator!
+
+From another perspective, a part of this project is a crawler (for the submission table-like pages as of right now), which allows you to interact with the submissions in a more developer friendly way. Maybe you want to build your own browser, then this is for you as well!
+
+This project was mainly created with the Steam Deck in mind, but should work on any platform, that supports Python!
+
+[size=16]Screenshots[/size]
+
+[b]SMW Central Browser main screen SMW Central Browser main screen[/b]
+[url=https://raw.githubusercontent.com/R3tr0BoiDX/smwc-browser/master/.github/user/screen_main.png?raw=true][img]https://raw.githubusercontent.com/R3tr0BoiDX/smwc-browser/master/.github/user/screen_main_small.png?raw=true[/img][/url]
+
+[b]SMW Central Browser filter screen SMW Central Browser filter screen[/b]
+[url=https://raw.githubusercontent.com/R3tr0BoiDX/smwc-browser/master/.github/user/screen_filter.png?raw=true][img]https://raw.githubusercontent.com/R3tr0BoiDX/smwc-browser/master/.github/user/screen_filter_small.png?raw=true[/img][/url]
+
+[size=16]Install[/size]
+There are two ways for you to install this. You can download precompiled binaries or clone this repo and run it from the source code!
+
+[size=12]Precompiled binaries[/size]
+You can get the latest precompiled binaries from the releases section of the GitHub project by following the link below. Just download them and execute them! It's nearly that easy!
+
+[url=https://github.com/R3tr0BoiDX/smwc-browser/releases/latest][img]https://github.com/R3tr0BoiDX/smwc-browser/blob/master/.github/user/download_button.png?raw=true[/img][/url]
+
+[size=12]Run from source[/size]
+If you prefer to run the program from the source, you should [url=https://github.com/R3tr0BoiDX/smwc-browser/]check out the projects GitHub page[/url].
+
+[size=16]Future ideas[/size]
+
+[i]In order of significance:[/i]
+— Wrapper and screen for hack entry site
+— Wrapper for hack screenshots and display in browser
+— Save filter parameter
+— File browser for unzipped hack, if there are multiple patch files
+— Should include an option to show all files and apply them as patches if the user wishes so
+— Maybe a way to delete downloaded hacks from the library?
+— Support for SMW2:YI and SM64
+— Settings screen
+— Argument to disable checksum check
+— Language support
+— Constructive criticism and ideas for improvements are also always welcome!
+
+[size=16]Wanna help?[/size]
+This project is entirely done in my free time next to my full time job. Soon, I'll write my bachelor thesis and will have much less time for this project. So, if you wanna contribute and help with any feature, you're welcome! We need tests, bug fixes and new features would be nice as well. I much appreciate your consideration!
+
+[size=24]More information can be found on the[url=https://github.com/R3tr0BoiDX/smwc-browser/] GitHub page of this project[/url]![/size]

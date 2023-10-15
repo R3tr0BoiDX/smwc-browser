@@ -1,0 +1,21 @@
+# SMW Central Browser
+Hey! Thanks for stopping by! Today, I bring you the [SMW Central Browser](https://github.com/R3tr0BoiDX/smwc-browser/)! 
+
+## What is this?
+
+Depending on your perspective, this can be several. Mostly, it's a handy tool to browser and search for [SMW hacks](https://www.smwcentral.net/?p=section&s=smwhacks) on [SMW Central](https://www.smwcentral.net/). This tool allows you to browse through all SMW hacks submissions, search with specific filters, lets you download and patch your SMW SFC file and launches the patched ROM with your favorite emulator!
+
+From another perspective, a part of this project is a crawler (for the submission table-like pages as of right now), which allows you to interact with the submissions in a more developer friendly way. Maybe you want to build your own browser, then you might want to check out [this subfolder](source/smwc)!
+
+This project was mainly created with the Steam Deck in mind, but should work on any platform, that supports Python!
+## Install
+There are two ways for you to install this. You can download precompiled binaries or clone this repo and run it from the source code!
+### Precompiled binaries
+You can get the [latest precompiled binaries](https://github.com/R3tr0BoiDX/smwc-browser/releases/latest) from the releases section from this project's GitHub page. Just download them and execute them! It's nearly that easy!
+### Run from source
+If you prefer to run the program from the source, you should [check out the projects GitHub page](https://github.com/R3tr0BoiDX/smwc-browser/).
+
+## Wanna help?
+If you wanna contribute and help with any feature, you're welcome! We need tests, bug fixes and new features would be nice as well. I much appreciate your consideration!
+
+# More information can be found on the [GitHub page of this project](https://github.com/R3tr0BoiDX/smwc-browser/)
